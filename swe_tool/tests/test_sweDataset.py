@@ -1,6 +1,8 @@
 # Name: Yulin Zhuo 
 # Github username: edsml-yz6622
 
+import sys
+sys.path.insert(0,'.')
 import os
 import pytest
 import pandas as pd

@@ -1,6 +1,8 @@
 # Name: Yulin Zhuo 
 # Github username: edsml-yz6622
 
+import sys
+sys.path.insert(0,'.')
 import pytest
 import torch
 import numpy as np

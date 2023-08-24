@@ -2,7 +2,7 @@
 # Github username: edsml-yz6622
 
 import torch
-import models
+from models import LSTM
 import numpy as np
 
 class predictLSTM():
@@ -178,31 +178,31 @@ def model_class(type='general', sub_type=None):
     """
     # The general model
     if type == 'general':
-        base_model = models.LSTM(input_dim=1, hidden_dims=[60, 30], num_epochs=100) 
+        base_model = LSTM(input_dim=1, hidden_dims=[60, 30], num_epochs=100) 
     # The models for ensemble model based on countries
     elif type == 'countries':
         if sub_type == 'canada':
-            base_model = models.LSTM(input_dim=1, hidden_dims=[60, 30], num_epochs=60)
+            base_model = LSTM(input_dim=1, hidden_dims=[60, 30], num_epochs=60)
         elif sub_type == 'switzerland':
-            base_model = models.LSTM(input_dim=1, hidden_dims=[70, 50, 30], num_epochs=100)
+            base_model = LSTM(input_dim=1, hidden_dims=[70, 50, 30], num_epochs=100)
         elif sub_type == 'norway':
-            base_model = models.LSTM(input_dim=2, hidden_dims=[70, 40, 20], num_epochs=100)
+            base_model = LSTM(input_dim=2, hidden_dims=[70, 40, 20], num_epochs=100)
         elif sub_type == 'US':
-            base_model = models.LSTM(input_dim=1, hidden_dims=[60, 30], num_epochs=100)
+            base_model = LSTM(input_dim=1, hidden_dims=[60, 30], num_epochs=100)
         else:
             raise ValueError("'sub_type' should either be 'US', 'canada', 'switzerland' or 'norway'.")
     # The models for ensemble model based on snow class
     elif type == 'snowclass':
         if sub_type == 1:
-            base_model = models.LSTM(input_dim=1, hidden_dims=[70, 50, 30], num_epochs=60)
+            base_model = LSTM(input_dim=1, hidden_dims=[70, 50, 30], num_epochs=60)
         elif sub_type == 2:
-            base_model = models.LSTM(input_dim=1, hidden_dims=[60, 30], num_epochs=30)
+            base_model = LSTM(input_dim=1, hidden_dims=[60, 30], num_epochs=30)
         elif sub_type == 3:
-            base_model = models.LSTM(input_dim=3, hidden_dims=[70, 50, 30], num_epochs=200)
+            base_model = LSTM(input_dim=3, hidden_dims=[70, 50, 30], num_epochs=200)
         elif sub_type == 5:
-            base_model = models.LSTM(input_dim=1, hidden_dims=[60, 30], num_epochs=50)
+            base_model = LSTM(input_dim=1, hidden_dims=[60, 30], num_epochs=50)
         elif sub_type == 6:
-            base_model = models.LSTM(input_dim=1, hidden_dims=[50], num_epochs=100)
+            base_model = LSTM(input_dim=1, hidden_dims=[50], num_epochs=100)
         else:
             raise ValueError("'type' should be an integer from 1,2,3,5,6.")
     else:

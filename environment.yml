@@ -1,0 +1,16 @@
+name: swe_estimation
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.9
+  - numpy>=1.13.0
+  - pandas
+  - matplotlib
+  - torch
+  - scikit-learn
+  - rasterio
+  - cartopy
+  - pytest
+  - pip:
+   - -r requirements.txt

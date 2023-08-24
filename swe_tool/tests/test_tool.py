@@ -1,10 +1,12 @@
 # Name: Yulin Zhuo 
 # Github username: edsml-yz6622
 
+import sys
+sys.path.insert(0,'.')
 import pytest
 import numpy as np
 import pandas as pd
-import tool
+import tool as tool
 import sklearn
 from predictLSTM import predictLSTM
 from sweDataset import sweDataset

@@ -1,11 +1,13 @@
 # Name: Yulin Zhuo 
 # Github username: edsml-yz6622
 
+import sys
+sys.path.insert(0,'.')
 import pytest
 import torch
 import numpy as np
 from torch.utils.data import DataLoader, TensorDataset
-from models import LSTM, train_model
+from models  import LSTM, train_model
 
 class TestLSTM():
     @pytest.fixture(autouse=True)
