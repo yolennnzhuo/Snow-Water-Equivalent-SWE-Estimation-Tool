@@ -161,8 +161,8 @@ from models import train_model
 - model: The LSTM model or any model that inherits from torch.nn.Module.
 - ts: Time sequence length, representing the number of time steps to be considered in the model.
 - n_features: The number of features used in training.
-- train_loader: DataLoader for training data.
-- val_loader: DataLoader for validation data.
+- train_loader: Data loader for training data.
+- val_loader: Data loader for validation data.
 - optimiser: The optimiser, e.g Adam, used to update model weights.
 - criterion: Loss function, e.g., Mean Squared Error (MSE), for computing the training and validation loss.
 - scheduler: Learning rate scheduler, e.g., torch.optim.lr_scheduler.StepLR.
@@ -170,14 +170,14 @@ from models import train_model
 ```bash
 train_losses, val_losses = train_model(
     model=model_instance, 
-    ts=time_sequence_length, 
-    n_features=number_of_features, 
+    ts=ts, 
+    n_features=n_features, 
     train_loader=train_data_loader, 
     val_loader=val_data_loader, 
-    optimiser=optimizer_instance, 
-    criterion=loss_function_instance, 
-    scheduler=learning_rate_scheduler_instance,
-    is_early_stop=True
+    optimiser=optimiser, 
+    criterion=loss_function, 
+    scheduler=learning_rate_schedule,
+    is_early_stop=False
 )
 ```
 
