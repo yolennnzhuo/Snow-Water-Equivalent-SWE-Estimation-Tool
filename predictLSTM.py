@@ -1,3 +1,6 @@
+# Name: Yulin Zhuo 
+# Github username: edsml-yz6622
+
 import torch
 import models
 import numpy as np
