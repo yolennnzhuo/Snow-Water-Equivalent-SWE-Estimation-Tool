@@ -80,8 +80,8 @@ Attributes:
 
 Methods:
 - get_y_scaler(): Get the scaler for target data.
-- get_data_loaders(batch_size=32): Get the data loader for training, testing and validation.
-- inverse_scale_target(target): Reverse the predicted value back to the original scale by using the scaler from 'get_y_scaler()'.
+- get_data_loaders(): Get the data loader for training, testing and validation.
+- inverse_scale_target(): Reverse the predicted value back to the original scale by using the scaler from 'get_y_scaler()'.
 
 How to use:
 
@@ -93,8 +93,8 @@ import sweDataset
 2. Instantiate the dataset:
 - df: Your training dataframe.
 - df_test: Your testing dataframe.
-- feature_name: Name of the feature column.
-- ts: Time sequence length.
+- var: List of name of the features, e.g ['HS'].
+- ts: Time sequence length, e.g 30.
 ```bash
 dataset = sweDataset(df=df, df_test=df_test, var=['feature_name'], ts=ts)
 ```
@@ -111,7 +111,7 @@ inversed_values = dataset.inverse_scale_target(predicted_values)
 
 ### models.py
 
-Description: 'models' is a Python class designed to provide a flexible LSTM (Long Short-Term Memory) model structure.
+Description: 'models.py' contains class and methods to set up, train, and evaluate LSTM architectures.
 
 **'LSTM' Class**
 
@@ -196,12 +196,12 @@ Attributes:
 
 Methods:
 - call: Make the instance to use the appropriate prediction method.
-- add_country_model(x): Ensemble all the LSTM models based on countries by adding to dictionary.
-- add_snowclass_model(x): Ensemble all the LSTM models based on different snow classes by adding to dictionary.
-- predict_by_country(x): Apply the ensemble LSTM models with a specific location to 
+- add_country_model(): Ensemble all the LSTM models based on countries by adding to dictionary.
+- add_snowclass_model(): Ensemble all the LSTM models based on different snow classes by adding to dictionary.
+- predict_by_country(): Apply the ensemble LSTM models with a specific location to 
                             predict the SWE.
-- predict_by_snowclass(x): Apply the ensemble LSTM models with a specific snow class to predict the SWE.
-- predict_by_general(x): Apply the general LSTM models to predict the SWE (The model is trained 
+- predict_by_snowclass(): Apply the ensemble LSTM models with a specific snow class to predict the SWE.
+- predict_by_general(): Apply the general LSTM models to predict the SWE (The model is trained 
                             on the whole dataset - across countries).
 
 How to use:
@@ -272,6 +272,8 @@ model.add_snowclass_model(snow_class, model_path)
 ### tool.py
 
 Description: The tool.py file contains lots of functions designed for different functionalities including metrics calculation, plotting, and model evaluation in snow water equivalent (SWE) estimation.
+
+The following examples shows the usage of some useful functions.
 
 **'plot_time_series'**
 
