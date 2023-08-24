@@ -271,7 +271,7 @@ model.add_snowclass_model(snow_class, model_path)
 
 ### tool.py
 
-Description: 
+Description: The tool.py file contains lots of functions designed for different functionalities including metrics calculation, plotting, and model evaluation in snow water equivalent (SWE) estimation.
 
 **'plot_time_series'**
 
