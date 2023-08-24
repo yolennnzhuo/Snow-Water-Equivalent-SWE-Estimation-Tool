@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>predictLSTM module &#8212; IRP 23.08.2023 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b3523f8e" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=039e1c02" />
+    <script src="_static/documentation_options.js?v=7b807efb"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="predictlstm-module">
+<h1>predictLSTM module<a class="headerlink" href="#predictlstm-module" title="Link to this heading">¶</a></h1>
+<dl class="py function" id="module-predictLSTM">
+<dt class="sig sig-object py" id="predictLSTM.load_model">
+<span class="sig-prename descclassname"><span class="pre">predictLSTM.</span></span><span class="sig-name descname"><span class="pre">load_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'general'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sub_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#predictLSTM.load_model" title="Link to this definition">¶</a></dt>
+<dd><p>Load a certain type of pre-trained LSTM model from the given path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_path</strong> (<em>str</em>) – The path where the pre-trained model is saved.</p></li>
+<li><p><strong>type</strong> (<em>str</em><em>, </em><em>optional</em>) – The general category of the model, can be ‘general’, ‘countries’, 
+or ‘snowclass’. Default is ‘general’.</p></li>
+<li><p><strong>sub_type</strong> (<em>str</em><em>, </em><em>optional</em>) – Further specific category based on the ‘type’. 
+For ‘countries’, it should be a country name; for ‘snowclass’, it should be a number.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A LSTM model.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.nn.Module</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="predictLSTM.model_class">
+<span class="sig-prename descclassname"><span class="pre">predictLSTM.</span></span><span class="sig-name descname"><span class="pre">model_class</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'general'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sub_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#predictLSTM.model_class" title="Link to this definition">¶</a></dt>
+<dd><p>Return a specific LSTM model based on the provided type and sub_type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>type</strong> (<em>str</em><em>, </em><em>optional</em>) – The general category of the model, can be ‘general’, 
+‘countries’, or ‘snowclass’. Default is ‘general’.</p></li>
+<li><p><strong>sub_type</strong> (<em>str</em><em> or </em><em>int</em><em>, </em><em>optional</em>) – Further specific category based on the ‘type’. 
+For ‘countries’, it should be a country name; for ‘snowclass’, it should be a number.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A LSTM model.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.nn.Module</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="predictLSTM.predictLSTM">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">predictLSTM.</span></span><span class="sig-name descname"><span class="pre">predictLSTM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/Users/yz6622/Desktop/IRP/models/global_model.pth'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'general'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sub_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#predictLSTM.predictLSTM" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class designed to use a pre-trained LSTM Model to predict SWE value.</p>
+<dl>
+<dt>Attributes:</dt><dd><p>country_models: A dictionary where store the LSTM models based on countries.
+snowclass_models: A dictionary where store the LSTM models based on snow classes.
+type: The general category of the model.
+sub_type: The further specific category based on the ‘type’.
+model: The pre-trained LSTM model.</p>
+</dd>
+<dt>Methods:</dt><dd><p>__call__: Make the instance to use the appropriate prediction method.
+add_country_model(x): Ensemble all the LSTM models based on countries by adding to dictionary.
+add_snowclass_model(x): Ensemble all the LSTM models based on different snow classes by adding to dictionary.
+predict_by_country(x): Apply the ensemble LSTM models with a specific location to</p>
+<blockquote>
+<div><p>predict the SWE.</p>
+</div></blockquote>
+<p>predict_by_snowclass(x): Apply the ensemble LSTM models with a specific snow class to predict the SWE.
+predict_by_general(x): Apply the general LSTM models to predict the SWE (The model is trained</p>
+<blockquote>
+<div><p>on the whole dataset - across countries).</p>
+</div></blockquote>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="predictLSTM.predictLSTM.add_country_model">
+<span class="sig-name descname"><span class="pre">add_country_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">country</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#predictLSTM.predictLSTM.add_country_model" title="Link to this definition">¶</a></dt>
+<dd><p>Ensemble all the pre-trained LSTM model (Add all the models to ‘country_models’ dictionary)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>country</strong> (<em>str</em>) – The name of country where needs to predict SWE.</p></li>
+<li><p><strong>model_path</strong> (<em>str</em>) – The path stored the pre-trained LSTM model.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="predictLSTM.predictLSTM.add_snowclass_model">
+<span class="sig-name descname"><span class="pre">add_snowclass_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">snow_class</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#predictLSTM.predictLSTM.add_snowclass_model" title="Link to this definition">¶</a></dt>
+<dd><p>Ensemble all the pre-trained LSTM model (Add all the models to ‘snowclass_models’ dictionary)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>snow_class</strong> (<em>int</em>) – The snow class category, either 1, 2, 3, 5, or 6.</p></li>
+<li><p><strong>model_path</strong> (<em>str</em>) – The path stored the pre-trained LSTM model.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="predictLSTM.predictLSTM.input_preprocess">
+<span class="sig-name descname"><span class="pre">input_preprocess</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#predictLSTM.predictLSTM.input_preprocess" title="Link to this definition">¶</a></dt>
+<dd><p>Convert the input data to torch tensor and float</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input_data</strong> (<em>list</em><em> or </em><em>numpy.array</em>) – The input data requires for the models.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The processed input data.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="predictLSTM.predictLSTM.predict_by_country">
+<span class="sig-name descname"><span class="pre">predict_by_country</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">country</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#predictLSTM.predictLSTM.predict_by_country" title="Link to this definition">¶</a></dt>
+<dd><p>Call the ensemble models to predict the SWE value by passing the required input data(X).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>country</strong> (<em>str</em>) – The name of country where needs to predict SWE.</p></li>
+<li><p><strong>input_data</strong> (<em>list</em><em> or </em><em>numpy.array</em>) – The input data requires for the models.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>model(input_data): The predicted value of SWE.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="predictLSTM.predictLSTM.predict_by_general">
+<span class="sig-name descname"><span class="pre">predict_by_general</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#predictLSTM.predictLSTM.predict_by_general" title="Link to this definition">¶</a></dt>
+<dd><p>Call the general model to predict the SWE value by passing the required input data(X).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input_data</strong> (<em>list</em><em> or </em><em>numpy.array</em>) – The input data requires for the models.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>model(input_data): The predicted value of SWE.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="predictLSTM.predictLSTM.predict_by_snowclass">
+<span class="sig-name descname"><span class="pre">predict_by_snowclass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">snow_class</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#predictLSTM.predictLSTM.predict_by_snowclass" title="Link to this definition">¶</a></dt>
+<dd><p>Call the ensemble models to predict the SWE value by passing the required input data(X).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>snow_class</strong> (<em>int</em>) – The snow class category, either 1, 2, 3, 5, or 6.</p></li>
+<li><p><strong>input_data</strong> (<em>list</em><em> or </em><em>numpy.array</em>) – The input data requires for the models.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>model(input_data): The predicted value of SWE.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">IRP</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, Yulin_Zhuo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="_sources/predictLSTM.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

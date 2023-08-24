@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>tool module &#8212; IRP 23.08.2023 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b3523f8e" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=039e1c02" />
+    <script src="_static/documentation_options.js?v=7b807efb"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="tool-module">
+<h1>tool module<a class="headerlink" href="#tool-module" title="Link to this heading">¶</a></h1>
+<dl class="py function" id="module-tool">
+<dt class="sig sig-object py" id="tool.apply_perturbation">
+<span class="sig-prename descclassname"><span class="pre">tool.</span></span><span class="sig-name descname"><span class="pre">apply_perturbation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tool.apply_perturbation" title="Link to this definition">¶</a></dt>
+<dd><p>Apply perturbation to the snow depth to simulate the measurement error and do the data augumentation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>hs</strong> (<em>pandas.core.series.Series</em>) – The input data (snow depth) need to apply perturbation.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>perturbed_depth: The output seires after applying perturbation according to the 2017 WMO’s guidelines.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pandas.core.series.Series</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tool.evaluate_model">
+<span class="sig-prename descclassname"><span class="pre">tool.</span></span><span class="sig-name descname"><span class="pre">evaluate_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_loader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tool.evaluate_model" title="Link to this definition">¶</a></dt>
+<dd><p>Evaluate the trained model by calculating MSE, KGE, MAE and R^2 score, and plot the difference between the true values and the predicted values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>test_loader</strong> (<em>torch.utils.data.DataLoader</em>) – The dataloader contain the test data.</p></li>
+<li><p><strong>model</strong> (<em>torch.nn.Module</em>) – The trained model.</p></li>
+<li><p><strong>dataset</strong> (<em>class object</em>) – An object containing methods for inversing the data scaling.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tool.kge">
+<span class="sig-prename descclassname"><span class="pre">tool.</span></span><span class="sig-name descname"><span class="pre">kge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">real</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pred</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tool.kge" title="Link to this definition">¶</a></dt>
+<dd><p>Calculate the value of Kling-Gupta Efficiency.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>real</strong> (<em>numpy.array</em><em> or </em><em>list</em>) – The true test data.</p></li>
+<li><p><strong>pred</strong> (<em>numpy.array</em><em> or </em><em>list</em>) – The predicted test data.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>kge: The calculated value of Kling-Gupta Efficiency.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tool.mean_bias_error">
+<span class="sig-prename descclassname"><span class="pre">tool.</span></span><span class="sig-name descname"><span class="pre">mean_bias_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y_true</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_pred</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tool.mean_bias_error" title="Link to this definition">¶</a></dt>
+<dd><p>Calculate the mean bias error.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y_true</strong> (<em>numpy.ndarray</em>) – The true value of target variable.</p></li>
+<li><p><strong>y_pred</strong> (<em>numpy.ndarray</em>) – The predicted value of target variable.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Mean bias error of the target variable.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tool.minmax_data">
+<span class="sig-prename descclassname"><span class="pre">tool.</span></span><span class="sig-name descname"><span class="pre">minmax_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'train'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scaler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tool.minmax_data" title="Link to this definition">¶</a></dt>
+<dd><p>Apply Min-Max Scaler to the training and testing data (to the range 0-1).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>dataframe</em>) – The input data needed to scale.</p></li>
+<li><p><strong>dtype</strong> (<em>str</em><em>, </em><em>optional</em>) – The type of input data, choose train or test, default is train.</p></li>
+<li><p><strong>scaler</strong> (<em>sklearn.preprocessing.Scaler</em><em>, </em><em>optional</em>) – The scaler used to scale the data, default is None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>(data_norm, scaler): The tuple of scaled data and the corresponding scaler.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tool.plot_loss">
+<span class="sig-prename descclassname"><span class="pre">tool.</span></span><span class="sig-name descname"><span class="pre">plot_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_losses</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val_losses</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tool.plot_loss" title="Link to this definition">¶</a></dt>
+<dd><p>Plot the training and validation loss in the training process.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>train_losses</strong> (<em>numpy.array</em><em> or </em><em>list</em>) – The calculated training loss.</p></li>
+<li><p><strong>val_losses</strong> (<em>numpy.array</em><em> or </em><em>list</em>) – The calculated validation loss.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tool.plot_scatter">
+<span class="sig-prename descclassname"><span class="pre">tool.</span></span><span class="sig-name descname"><span class="pre">plot_scatter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y_test_ori</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_pred</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tool.plot_scatter" title="Link to this definition">¶</a></dt>
+<dd><p>Plot the scattler plot to show the difference between the true data and the predicted data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y_test_ori</strong> (<em>numpy.array</em><em> or </em><em>list</em>) – The true data.</p></li>
+<li><p><strong>test_pred</strong> (<em>numpy.array</em><em> or </em><em>list</em>) – The predicted data.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tool.plot_snow_class">
+<span class="sig-prename descclassname"><span class="pre">tool.</span></span><span class="sig-name descname"><span class="pre">plot_snow_class</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tool.plot_snow_class" title="Link to this definition">¶</a></dt>
+<dd><p>Plot the diagram to show the global snow classification according to snow classification scheme introduced by (Liston and Sturm 2021).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tool.plot_time_series">
+<span class="sig-prename descclassname"><span class="pre">tool.</span></span><span class="sig-name descname"><span class="pre">plot_time_series</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">true_values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predictions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tool.plot_time_series" title="Link to this definition">¶</a></dt>
+<dd><p>Plots the true and predicted SWE values over time.
+:param true_values: The ground truth SWE values.
+:param predictions: The predicted SWE values.
+:param dates: The dates corresponding to the values. If None, will use integer indices.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tool.rebuild_data">
+<span class="sig-prename descclassname"><span class="pre">tool.</span></span><span class="sig-name descname"><span class="pre">rebuild_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tool.rebuild_data" title="Link to this definition">¶</a></dt>
+<dd><p>Rebuild the input data into the required shape of LSTM.</p>
+<p>The input data should contain the following columns (Col names should be the same.):
+- ‘loc’: Identifying the location.
+- ‘date’: The timestamp associated with each sample.
+- ‘station_SWE’: The target values for estimating.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>dataframe</em>) – The input data needed to rebuild.</p></li>
+<li><p><strong>var</strong> (<em>list</em>) – The features selected in rebuilding.</p></li>
+<li><p><strong>ts</strong> (<em>int</em><em>, </em><em>optinal</em>) – The time sequence length, the number of time steps to be considered in model, default is 30.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>(input_values, target_values): The tuple of input_values(X) and target_values(Y).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tool.split_dataset">
+<span class="sig-prename descclassname"><span class="pre">tool.</span></span><span class="sig-name descname"><span class="pre">split_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">42</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tool.split_dataset" title="Link to this definition">¶</a></dt>
+<dd><p>Splitting the dataset into training and validation set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>dataframe</em>) – The input data (X).</p></li>
+<li><p><strong>Y</strong> (<em>list</em>) – The target data (Y)</p></li>
+<li><p><strong>test_size</strong> (<em>float</em><em>, </em><em>optinal</em>) – The proportion to include in the test part, default is 0.2.</p></li>
+<li><p><strong>random_state</strong> (<em>int</em><em> or </em><em>None</em><em>, </em><em>optinal</em>) – The seed used to control the shuffling, default is 42.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>(X_train, X_val, y_train, y_val): The tuple of X_train, X_val, y_train, y_val.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tool.standardise_data">
+<span class="sig-prename descclassname"><span class="pre">tool.</span></span><span class="sig-name descname"><span class="pre">standardise_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'train'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scaler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tool.standardise_data" title="Link to this definition">¶</a></dt>
+<dd><p>Apply Strandard Scaler to the training and testing data (to the range from -1 to 1).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>dataframe</em>) – The input data needed to scale.</p></li>
+<li><p><strong>dtype</strong> (<em>str</em><em>, </em><em>optional</em>) – The type of input data, choose train or test, default is train.</p></li>
+<li><p><strong>scaler</strong> (<em>sklearn.preprocessing.Scaler</em><em>, </em><em>optional</em>) – The scaler used to scale the data, default is None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>(data_norm, scaler): The tuple of scaled data and the corresponding scaler.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">IRP</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, Yulin_Zhuo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="_sources/tool.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
