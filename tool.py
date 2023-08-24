@@ -5,30 +5,45 @@ import torch
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
+import rasterio
+import cartopy.crs as ccrs
+from matplotlib.colors import ListedColormap
 
-
-def inverse_scaling(scaled_data, original_min, original_max):
-    return scaled_data * (original_max - original_min) + original_min
-
-def inverse_scale(df):
+def mean_bias_error(y_true, y_pred):
     """
-    Inverse the training and testing data back to the original scale (because the training and testing data are all preprocessed before.)
+    Calculate the mean bias error.
 
-    :param df: The input data needed to inverse to the original scale.
-    :type df: dataframe
+    :param y_true: The true value of target variable.
+    :type y_true: numpy.ndarray
+    :param y_pred: The predicted value of target variable.
+    :type y_pred: numpy.ndarray
 
-    :return: df: The inversed data.
-    :rtype: dataframe
+    :return: Mean bias error of the target variable.
+    :rtype: numpy.ndarray
     """
-    # Inverse scaling
-    df['HS'] = inverse_scaling(df['HS'], 0.0, 555.7083333333334)
-    df['precipitation'] = inverse_scaling(df['precipitation'], 0, 0.0508635304868221)
-    df['snowfall'] = inverse_scaling(df['snowfall'], 0, 0.0508402287960052)
-    df['solar_radiation'] = inverse_scaling(df['solar_radiation'], 0, 22261948.0)
-    df['temperature'] = inverse_scaling(df['temperature'], -29.88636779785156, 39.6531982421875)
-    df['rain'] = inverse_scaling(df['rain'], 0, 0.0488765742629765)
-    df['month'] = inverse_scaling(df['month'], 1, 12)
-    return df
+    return np.mean(y_pred - y_true)
+
+def apply_perturbation(hs):
+    """
+    Apply perturbation to the snow depth to simulate the measurement error and do the data augumentation.
+
+    :param hs: The input data (snow depth) need to apply perturbation.
+    :type hs: pandas.core.series.Series
+
+    :return: perturbed_depth: The output seires after applying perturbation according to the 2017 WMO's guidelines.
+    :rtype: pandas.core.series.Series
+    """
+    if hs < 20:
+        # When snow depth < 20, errors within ±1
+        error = np.random.uniform(-1, 1)
+    else:
+        # When snow depth >= 20, errors within 5% of the observed values
+        max_error = hs * 0.05
+        error = np.random.uniform(-max_error, max_error)
+    
+    perturbed_depth = hs + error
+    
+    return perturbed_depth
 
 def minmax_data(data, dtype='train', scaler=None):
     """
@@ -36,7 +51,7 @@ def minmax_data(data, dtype='train', scaler=None):
 
     :param data: The input data needed to scale.
     :type data: dataframe
-    :param dtype: The type of input data,such as train or test, default is train.
+    :param dtype: The type of input data, choose train or test, default is train.
     :type dtype: str, optional
     :param scaler: The scaler used to scale the data, default is None.
     :type scaler: sklearn.preprocessing.Scaler, optional
@@ -44,13 +59,17 @@ def minmax_data(data, dtype='train', scaler=None):
     :return: (data_norm, scaler): The tuple of scaled data and the corresponding scaler.
     :rtype: tuple
     """
+    # When handling the training data
     if dtype == 'train':
         # Create a scaler object
         scaler = MinMaxScaler()
         # Fit and transform the data
         data = np.array(data)
         data_norm = scaler.fit_transform(data)
+
+    # When input the testing data      
     elif dtype == 'test':
+        # Only transform the data
         data_norm = scaler.transform(data)
     else:
         raise ValueError("'dtype' should either be 'test' or 'train'.")
@@ -59,11 +78,11 @@ def minmax_data(data, dtype='train', scaler=None):
 
 def standardise_data(data, dtype='train', scaler=None):
     """
-    Apply Strandard Scaler to the training and testing data (to the range -1-1).
+    Apply Strandard Scaler to the training and testing data (to the range from -1 to 1).
     
     :param data: The input data needed to scale.
     :type data: dataframe
-    :param dtype: The type of input data,such as train or test, default is train.
+    :param dtype: The type of input data, choose train or test, default is train.
     :type dtype: str, optional
     :param scaler: The scaler used to scale the data, default is None.
     :type scaler: sklearn.preprocessing.Scaler, optional
@@ -71,12 +90,15 @@ def standardise_data(data, dtype='train', scaler=None):
     :return: (data_norm, scaler): The tuple of scaled data and the corresponding scaler.
     :rtype: tuple
     """
+    # When handling the training data
     if dtype == 'train':
         # Create a scaler object
         scaler = StandardScaler()
         # Fit and transform the data
         data = np.array(data)
         data_norm = scaler.fit_transform(data)
+    
+    # When input the testing data
     elif dtype == 'test':
         # Only transform the data
         data_norm = scaler.transform(data)
@@ -108,12 +130,12 @@ def rebuild_data(df, var, ts=30):
     target_values = []
 
     for location in df['loc'].unique():
-        loc_df = df[df['loc'] == location]  # select the current location only
+        loc_df = df[df['loc'] == location].copy() # Select the current location only
         loc_df['date'] = pd.to_datetime(loc_df['date'])
-        loc_df = loc_df.sort_values('date')  # sort the data
-        loc_df.reset_index(drop=True, inplace=True)  # reset the index
+        loc_df = loc_df.sort_values('date')  # Sort the data
+        loc_df.reset_index(drop=True, inplace=True)  # Reset the index
 
-        # find the time gap
+        # Find the time gap
         time_gaps = loc_df['date'].diff() > pd.Timedelta(1, 'D')
         time_gaps = time_gaps[time_gaps].index.tolist()
 
@@ -122,22 +144,30 @@ def rebuild_data(df, var, ts=30):
             for end in time_gaps:
                 # Subtract ts from end so that i+ts will not go out of bounds
                 for i in range(start, end - ts):
-                    input_values.append(loc_df[var][i:i+ts])
-                    target_values.append(loc_df['station_SWE'][i+ts])
+                    # Check if there is any missing values
+                    if not np.isnan(loc_df['station_SWE'][i+ts]) and all([not np.isnan(loc_df[v][i:i+ts]).any() for v in var]):
+                        # Randomly apply the perturbation
+                        if not (loc_df[var][i:i+ts].sum(axis=0) == 0).all() or np.random.rand() < 0.5:
+                            input_values.append(loc_df[var][i:i+ts])
+                            target_values.append(loc_df['station_SWE'][i+ts])
                 start = end + 1
 
-        # last continuous time series
-        if len(loc_df) - start >= ts:  # Add this line
+        # The last continuous time series
+        if len(loc_df) - start >= ts: 
             for i in range(start, len(loc_df) - ts):
-                input_values.append(loc_df[var][i:i+ts])
-                target_values.append(loc_df['station_SWE'][i+ts])
+                # Check if there is any missing values
+                if not np.isnan(loc_df['station_SWE'][i+ts]) and all([not np.isnan(loc_df[v][i:i+ts]).any() for v in var]):
+                    # Randomly apply the perturbation
+                    if not (loc_df[var][i:i+ts].sum(axis=0) == 0).all() or np.random.rand() < 0.5:
+                        input_values.append(loc_df[var][i:i+ts])
+                        target_values.append(loc_df['station_SWE'][i+ts])
 
     input_values = np.array(input_values)
     target_values = np.array(target_values)
     
     return input_values, target_values
 
-def split_dataset(X, Y, test_size=0.2,random_state=42):
+def split_dataset(X, Y, test_size=0.2, random_state=42):
     """
     Splitting the dataset into training and validation set.
     
@@ -170,7 +200,7 @@ def kge(real, pred):
     :return: kge: The calculated value of Kling-Gupta Efficiency.
     :rtype: float
     """
-    # reshape the input into one dim
+    # Reshape the input into one dim
     r = np.corrcoef(pred, real)[0,1]
     alpha = np.std(pred) / np.std(real)
     beta = np.mean(pred) / np.mean(real)
@@ -186,7 +216,7 @@ def plot_loss(train_losses, val_losses):
     :param val_losses: The calculated validation loss. 
     :type val_losses: numpy.array or list
     """
-    # plot loss function
+    # Plot loss function
     plt.figure(figsize=(10,5))
     plt.plot(train_losses, label='Training Loss')
     plt.plot(val_losses, label='Validation Loss')
@@ -205,13 +235,36 @@ def plot_scatter(y_test_ori, test_pred):
     :param test_pred: The predicted data.
     :type test_pred: numpy.array or list
     """
-    # plot y_true = y_pred
+    # Plot y_true = y_pred
     plt.figure(figsize=(8, 8))
     plt.scatter(y_test_ori, test_pred, alpha=0.5)
     plt.xlabel('True Values')
     plt.ylabel('Predicted Values')
     plt.title('Scatter Plot of True vs Predicted Values')
     plt.plot([min(y_test_ori), max(y_test_ori)], [min(y_test_ori), max(y_test_ori)], color='red')  
+    plt.show()
+
+def plot_time_series(true_values, predictions, dates=None):
+    """
+    Plots the true and predicted SWE values over time.
+    :param true_values: The ground truth SWE values.
+    :param predictions: The predicted SWE values.
+    :param dates: The dates corresponding to the values. If None, will use integer indices.
+    """
+    if dates is not None:
+        dates = list(dates)  # Ensure dates is a list
+    else:
+        dates = list(range(len(true_values)))
+
+    fig, ax = plt.subplots(figsize=(15, 6))
+    ax.plot(dates, true_values, label="True Values", color='blue')
+    ax.plot(dates, predictions, label="Predicted Values", color='red', linestyle='--')
+    ax.legend()
+    ax.set_xlabel("Time")
+    ax.set_ylabel('SWE Value')
+    ax.set_title("True vs Predicted values over time")
+    ax.grid(True)
+    plt.tight_layout()  # Adjust the layout for better view
     plt.show()
 
 def evaluate_model(test_loader, model, dataset):
@@ -225,13 +278,13 @@ def evaluate_model(test_loader, model, dataset):
     :param dataset: An object containing methods for inversing the data scaling.
     :type dataset: class object
     """
-    # evaluation mode
+    # Evaluation mode
     model.eval()
 
     test_predictions = []
     y_test_real = []
 
-    # predict on the test data
+    # Predict on the test data
     with torch.no_grad():
         for i, (X, Y) in enumerate(test_loader):
             X = X.float()
@@ -240,45 +293,54 @@ def evaluate_model(test_loader, model, dataset):
             test_predictions.append(outputs.numpy())
             y_test_real.append(Y.numpy())
 
-    # concatenate the list of numpy arrays into one numpy array
+    # Concatenate the list of numpy arrays into one numpy array
     test_predictions = np.concatenate(test_predictions).reshape(-1, 1)
     y_test_real = np.concatenate(y_test_real).reshape(-1, 1)
 
-    # reverse the scaling
+    # Reverse the scaling
     test_pred = dataset.inverse_scale_target(test_predictions)
     y_test_ori = dataset.inverse_scale_target(y_test_real)
     
-    # Calculate the rmse kge mae r2
+    # Calculate the rmse kge mae r2 mbe
     rmse_test = np.sqrt(mean_squared_error(y_test_ori, test_pred))
     kge_test = kge(y_test_ori.reshape(-1), test_pred.reshape(-1))
     mae_test = mean_absolute_error(y_test_ori, test_pred)
     r2_test = r2_score(y_test_ori, test_pred)
+    mbe_test = mean_bias_error(y_test_ori, test_pred) 
 
     print('Root Mean Squared Error on Test Data:', rmse_test)
-    print('Kling-Gupta efficiency on Test Data:', kge_test)
+    print('Mean Bias Error on Test Data:', mbe_test)
     print('Mean Absolute Error on Test Data:', mae_test)
+    print('Kling-Gupta efficiency on Test Data:', kge_test)
     print('R2 Score on Test Data:', r2_test)
 
-    # plot y_true = y_pred
+    # Plot y_true = y_pred
     plot_scatter(y_test_ori, test_pred)
-    
-def rename_keys(model_path):
-    """
-    Rename keys in the model's stat dictionary and save the modified version. The function can be used
-    when the old structure of model is dfferent from the new structure of model.
-    
-    :param model_path: The path where the models are stored.
-    :type model_path: str
-    """
-    # Load the original state dict
-    state_dict = torch.load(model_path)
 
-    # Create a new dictionary with the renamed keys
-    new_state_dict = {}
-    for key, value in state_dict.items():
-        # Rename the keys here
-        new_key = key.replace("lstm1", "lstm_layers.0").replace("lstm2", "lstm_layers.1")
-        new_state_dict[new_key] = value
+    return rmse_test, mae_test, mbe_test, r2_test, kge_test, y_test_ori, test_pred
 
-    # Save the modified state dict
-    torch.save(new_state_dict, model_path)
+
+def plot_snow_class():
+    """
+    Plot the diagram to show the global snow classification according to snow classification scheme introduced by (Liston and Sturm 2021).
+    """
+    # Open file
+    with rasterio.open('/Users/yz6622/Desktop/IRP/dataset/SnowClass_GL_50km_0.50degree_2021_v01.0.tif') as src:
+        snow_class_array = src.read(1) 
+        snow_class_transform = src.transform 
+        snow_class_crs = src.crs  
+
+    cmap = ListedColormap(['red', 'green', 'orange', 'yellow', 'blue', 'cyan'])  
+
+    # Create map
+    fig = plt.figure(figsize=(20, 10))
+    ax = fig.add_subplot(1, 1, 1, projection=ccrs.PlateCarree()) 
+    ax.set_global() 
+    ax.coastlines() 
+
+    # Show data
+    img = ax.imshow(snow_class_array, origin='upper', extent=[-180, 180, -90, 90], transform=ccrs.PlateCarree(), cmap=cmap)
+    cbar = plt.colorbar(img, ax=ax, orientation='horizontal', pad=0.03)
+    cbar.set_label('Snow Class')
+
+    plt.show()
