@@ -1,6 +1,6 @@
 # IRP - Snow Water Equivalent(SWE) Estimation Tool
 
-# The SWE_tool package has been designed to enable quick and easy modelling of SWE, across the regions where snow class is Tundra, Boreal Forest, Maritime, Prairie, and Montane Forest.
+The 'SWE_tool' package has been designed to enable quick and easy modelling of SWE, across the regions where snow class is Tundra, Boreal Forest, Maritime, Prairie, and Montane Forest.
 
 ### Contents
 
@@ -21,7 +21,7 @@ Snow Water Equivalent (SWE) is essential for managing water resources, producing
 
 ### Installation Guide
 
-Before installing ‘swe_tool’, ensuree your environment meets the dependencies below:
+Before installing ‘swe_tool’, ensure your environment meets the dependencies below:
 
 - Python > 3.9
 - numpy >= 1.13.0
@@ -76,7 +76,7 @@ Attributes:
     test_file: The file path to load the data for testing.
     var: The features required for training.
     ts: The time sequence length, the number of time steps to be considered in model.
-    scaler_y: The he scaler used to scale the testing target values.
+    scaler_y: The  scaler used to scale the testing target values.
 
 Methods:
     get_y_scaler(): Get the scaler for target data.
@@ -118,7 +118,7 @@ Description: 'models' is a Python class designed to provide a flexible LSTM (Lon
 The 'LSTM' class is a PyTorch-based implementation of a flexible LSTM architecture.
 
 Attributes:
-    num_epochs: The number of epoches runs for training, default value is '60'.
+    num_epochs: The number of epochs runs for training, default value is '60'.
     lstm_layers: List of LSTM layers.
     relu: Activation function (Rectified Linear Unit).
     fc: A fully connected linear layer for transformation.
