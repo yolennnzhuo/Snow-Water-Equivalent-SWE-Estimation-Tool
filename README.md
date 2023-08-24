@@ -78,7 +78,7 @@ Attributes:
 - ts: The time sequence length, the number of time steps to be considered in model.
 - scaler_y: The scaler used to scale the testing target values.
 
-Methods- 
+Methods:
 - get_y_scaler(): Get the scaler for target data.
 - get_data_loaders(batch_size=32): Get the data loader for training, testing and validation.
 - inverse_scale_target(target): Reverse the predicted value back to the original scale by using the scaler from 'get_y_scaler()'.
@@ -195,7 +195,7 @@ Attributes:
 - model: The pre-trained LSTM model.
 
 Methods:
-- __call__: Make the instance to use the appropriate prediction method.
+- call: Make the instance to use the appropriate prediction method.
 - add_country_model(x): Ensemble all the LSTM models based on countries by adding to dictionary.
 - add_snowclass_model(x): Ensemble all the LSTM models based on different snow classes by adding to dictionary.
 - predict_by_country(x): Apply the ensemble LSTM models with a specific location to 
