@@ -16,6 +16,7 @@
 <!-- TOC -->
 
 ### About
+
 Snow Water Equivalent (SWE) is essential for managing water resources, producing hydropower, preventing floods, and more, especially in places like California where the annual April snowpack water storage is almost twice as large as surface water reservoir storage [1]. Accurate estimation of SWE is crucial for a few reasons. It can first help with forecasting snowmelt water. Snowmelt water is used for agriculture and human consumption by about one sixth of the world's population (1.2 billion people) [2]. Furthermore, if the accurate peak SWE value can be provided, it can also aid in early-warning for the flooding.
 
 ### Installation Guide
