@@ -7,6 +7,7 @@ The 'SWE_tool' package has been designed to enable quick and easy modelling of S
 <!-- TOC -->
 * [About](#about)
 * [Installation Guide](#installation-guide)
+* [Folder Structure](#folder-structure)
 * [User Instructions](#user-instructions)
 * [Documentation](#documentation)
 * [Testing](#testing)
