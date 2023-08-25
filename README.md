@@ -7,7 +7,6 @@ The 'SWE_tool' package has been designed to enable quick and easy modelling of S
 <!-- TOC -->
 * [About](#about)
 * [Installation Guide](#installation-guide)
-* [Folder Structure](#folder-structure)
 * [User Instructions](#user-instructions)
 * [Documentation](#documentation)
 * [Testing](#testing)
@@ -55,9 +54,7 @@ pip install .
 
 ### Folder Structure
 
-The following sturcture lists the locations of some important files:
-```bash
-IRP/
+project-name/
 │
 ├── docs/                   # Documentation files and Sphinx source files
 │   ├── build/              # generated HTML files for the documentation
@@ -70,7 +67,6 @@ IRP/
 │   └── tool.py             # Contain helpful functions, e.g model evaluatation
 │
 ├── tests/                  # Intergrating test modules
-│   ├── __init__.py         
 │   ├── test_sweDataser.py  # Tests for sweDataset.py
 │   ├── test_models.py      # Tests for models.py
 │   ├── test_predictLSTM.py # Tests for predictLSTM.py
@@ -80,7 +76,6 @@ IRP/
 ├── environment.yml         # Environment configuration file
 ├── README.md               # README file
 └── LICENSE                 # License file
-```
 
 ### User Instructions
 
