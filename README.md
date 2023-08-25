@@ -55,6 +55,7 @@ pip install .
 
 ### Folder Structure
 
+The following sturcture lists the locations of some important files:
 ```bash
 IRP/
 │
