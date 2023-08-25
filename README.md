@@ -7,6 +7,7 @@ The 'SWE_tool' package has been designed to enable quick and easy modelling of S
 <!-- TOC -->
 * [About](#about)
 * [Installation Guide](#installation-guide)
+* [Folder Structure](#folder-structure)
 * [User Instructions](#user-instructions)
 * [Documentation](#documentation)
 * [Testing](#testing)
@@ -54,6 +55,7 @@ pip install .
 
 ### Folder Structure
 
+```bash
 IRP/
 │
 ├── docs/                   # Documentation files and Sphinx source files
@@ -77,6 +79,7 @@ IRP/
 ├── environment.yml         # Environment configuration file
 ├── README.md               # README file
 └── LICENSE                 # License file
+```
 
 ### User Instructions
 
