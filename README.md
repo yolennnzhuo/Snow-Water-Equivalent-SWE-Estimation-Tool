@@ -52,6 +52,32 @@ Once inside the environment, you can install ‘swe_tool’ with:
 pip install .
 ```
 
+### Folder Structure
+
+IRP/
+│
+├── docs/                   # Documentation files and Sphinx source files
+│   ├── build/              # generated HTML files for the documentation
+│
+├── swe_tool/               # Main estimation tool package
+│   ├── __init__.py         # Initialisation file
+│   ├── sweDataset.py       # Module for handling the dataset
+│   ├── models.py           # Module defining models
+│   ├── predictLSTM.py      # LSTM prediction file
+│   └── tool.py             # Contain helpful functions, e.g model evaluatation
+│
+├── tests/                  # Intergrating test modules
+│   ├── __init__.py         
+│   ├── test_sweDataser.py  # Tests for sweDataset.py
+│   ├── test_models.py      # Tests for models.py
+│   ├── test_predictLSTM.py # Tests for predictLSTM.py
+│   └── test_tool.py        # Tests for tool.py
+│
+├── setup.py                # Project setup and installation script
+├── environment.yml         # Environment configuration file
+├── README.md               # README file
+└── LICENSE                 # License file
+
 ### User Instructions
 
 The ’swe_tool‘ package consists of multiple Python files, each with its unique functionality. Below are the descriptions and usage instructions for each:
