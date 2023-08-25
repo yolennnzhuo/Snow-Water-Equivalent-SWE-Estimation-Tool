@@ -54,6 +54,9 @@ pip install .
 
 ### Folder Structure
 
+The following structure lists the locations of some important files:
+
+```bash
 project-name/
 │
 ├── docs/                   # Documentation files and Sphinx source files
@@ -76,6 +79,7 @@ project-name/
 ├── environment.yml         # Environment configuration file
 ├── README.md               # README file
 └── LICENSE                 # License file
+```
 
 ### User Instructions
 
