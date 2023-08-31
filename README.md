@@ -79,9 +79,9 @@ irp-yz6622/
 │   ├── test_predictLSTM.py # Tests for predictLSTM.py
 │   └── test_tool.py        # Tests for tool.py
 │
-├── data_prepare.ipynb      # Project setup and installation script
-├── model_train.ipynb       # Environment configuration file
-├── model_predict.ipynb     # README file
+├── data_prepare.ipynb      # Notebook for showing example of data analysis
+├── model_train.ipynb       # Notebook for showing example of model training
+├── model_predict.ipynb     # Notebook for showing example of model prediction
 ├── setup.py                # Project setup and installation script
 ├── environment.yml         # Environment configuration file
 ├── README.md               # README file
