@@ -1,6 +1,11 @@
-"""Python Snow Water Equivalent Estimation tool"""
+# Name: Yulin Zhuo 
+# Github username: edsml-yz6622
 
-from swe_tool import models
-from swe_tool import predictLSTM
-from swe_tool import sweDataset
-from swe_tool import tool
+"""
+Python Snow Water Equivalent Estimation tool
+"""
+
+from .tool import *
+from .predictLSTM import *
+from .models import *
+from .sweDataset import * 

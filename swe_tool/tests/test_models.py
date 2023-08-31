@@ -5,10 +5,10 @@ import sys
 sys.path.insert(0,'.')
 import pytest
 import torch
-from torch import nn
 import numpy as np
+import pandas as pd
 from torch.utils.data import DataLoader, TensorDataset
-from models import LSTM, train_model, train
+from models import LSTM, train_model
 
 class TestLSTM():
     @pytest.fixture(autouse=True)
@@ -101,15 +101,6 @@ class TestLSTM():
         reduced_lr = self.optimiser.param_groups[0]['lr']
         assert np.allclose(reduced_lr, initial_lr * 0.7)
 
-    def test_train(self):
-        model, rmse_test, mae_test, mbe_test, kge_test, r2_test = train(df=self.file, df_test=self.file, var=['HS'], 
-                                                                             hidden_dims=[50], num_epochs=1, step_size=1, 
-                                                                             gamma=0.5, ts=1, is_early_stop=True, threshold=20)
-        assert isinstance(model, nn.Module)
-        assert isinstance(rmse_test, np.floating)
-        assert isinstance(mae_test, np.floating)
-        assert isinstance(mbe_test, np.floating)
-        assert isinstance(kge_test, np.floating)
-        assert isinstance(r2_test, np.floating)
+
 
 

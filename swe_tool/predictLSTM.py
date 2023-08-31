@@ -2,7 +2,7 @@
 # Github username: edsml-yz6622
 
 import torch
-from swe_tool.models import LSTM
+from models import LSTM
 import numpy as np
 
 class predictLSTM():
@@ -10,28 +10,28 @@ class predictLSTM():
     A class designed to use a pre-trained LSTM Model to predict SWE value.
 
     Attributes:
-        country_models: A dictionary where store the LSTM models based on countries.
-        snowclass_models: A dictionary where store the LSTM models based on snow classes.
-        type: The general category of the model.
-        sub_type: The further specific category based on the 'type'.
-        model: The pre-trained LSTM model.
+        - country_models: A dictionary where store the LSTM models based on countries.
+        - snowclass_models: A dictionary where store the LSTM models based on snow classes.
+        - type: The general category of the model.
+        - sub_type: The further specific category based on the 'type'.
+        - model: The pre-trained LSTM model.
 
     Methods:
-        __call__: Make the instance to use the appropriate prediction method.
-        add_country_model(x): Ensemble all the LSTM models based on countries by adding to dictionary.
-        add_snowclass_model(x): Ensemble all the LSTM models based on different snow classes by adding to dictionary.
-        predict_by_country(x): Apply the ensemble LSTM models with a specific location to 
+        - __call__: Make the instance to use the appropriate prediction method.
+        - add_country_model(x): Ensemble all the LSTM models based on countries by adding to dictionary.
+        - add_snowclass_model(x): Ensemble all the LSTM models based on different snow classes by adding to dictionary.
+        - predict_by_country(x): Apply the ensemble LSTM models with a specific location to 
                                predict the SWE.
-        predict_by_snowclass(x): Apply the ensemble LSTM models with a specific snow class to predict the SWE.
-        predict_by_general(x): Apply the general LSTM models to predict the SWE (The model is trained 
+        - predict_by_snowclass(x): Apply the ensemble LSTM models with a specific snow class to predict the SWE.
+        - predict_by_general(x): Apply the general LSTM models to predict the SWE (The model is trained 
                                on the whole dataset - across countries).
     """
-    def __init__(self,model_path='/Users/yz6622/Desktop/IRP/models/global_model.pth',type='general',sub_type=None):
+    def __init__(self,model_path='../models/global_model.pth',type='general',sub_type=None):
         """
         Initialise the predictLSTM class.
 
         :param model_path: The path stored the pre-trained LSTM model, 
-                           default is '/Users/yz6622/Desktop/IRP/models/global_model.pth'.
+                           default is '../models/global_model.pth'.
         :type model_path: str, optional
         :param type: The general category of the model, can be 'general', 
                     'countries', or 'snowclass'. Default is 'general'.

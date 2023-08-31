@@ -42,24 +42,28 @@
 <p>scale, reconstruct, and partition data. For additional preprocessing, such as applying perturbation, users can preprocess the data 
 externally and then pass it into this class through a file (df).</p>
 <dl class="simple">
-<dt>Attributes:</dt><dd><p>df: The input data to train the model. (Either df or train_file must be provided, but not both.)
-df_test: The input data to test the model. (Either df_test or test_file must be provided, but not both.)
-train_file: The file path to load the data for training.
-test_file: The file path to load the data for testing.
-var: The features required for training.
-ts: The time sequence length, the number of time steps to be considered in model.
-X_train, X_val, X_test: Input data for training, validation, and testing respectively.
-y_train, y_val, y_test: Target data for training, validation, and testing respectively.
-scaler_temp: Scaler used for ‘temperature’.
-scaler_minmax: Scaler used for certain features (‘HS’, ‘precipitation’, ‘snowfall’, ‘solar_radiation’).
-scaler_y: Scaler used for ‘station_SWE’ feature.</p>
+<dt>Attributes:</dt><dd><ul class="simple">
+<li><p>df: The input data to train the model. (Either df or train_file must be provided, but not both.)</p></li>
+<li><p>df_test: The input data to test the model. (Either df_test or test_file must be provided, but not both.)</p></li>
+<li><p>train_file: The file path to load the data for training.</p></li>
+<li><p>test_file: The file path to load the data for testing.</p></li>
+<li><p>var: The features required for training.</p></li>
+<li><p>ts: The time sequence length, the number of time steps to be considered in model.</p></li>
+<li><p>X_train, X_val, X_test: Input data for training, validation, and testing respectively.</p></li>
+<li><p>y_train, y_val, y_test: Target data for training, validation, and testing respectively.</p></li>
+<li><p>scaler_temp: Scaler used for ‘temperature’.</p></li>
+<li><p>scaler_minmax: Scaler used for certain features (‘HS’, ‘precipitation’, ‘snowfall’, ‘solar_radiation’).</p></li>
+<li><p>scaler_y: Scaler used for ‘station_SWE’ feature.</p></li>
+</ul>
 </dd>
-<dt>Methods:</dt><dd><p>load_data(df, file_path): Load data either from a dataframe or a file path.
-scale_train_data(): Scale the training data.
-scale_test_data(): Scale the testing data.
-get_y_scaler(): Get the scaler for target data.
-get_data_loaders(batch_size=32): Get the data loader for training, testing and validation.
-inverse_scale_target(target): Reverse the predicted value back to the original scale by using the scaler from ‘get_y_scaler()’.</p>
+<dt>Methods:</dt><dd><ul class="simple">
+<li><p>load_data(df, file_path): Load data either from a dataframe or a file path.</p></li>
+<li><p>scale_train_data(): Scale the training data.</p></li>
+<li><p>scale_test_data(): Scale the testing data.</p></li>
+<li><p>get_y_scaler(): Get the scaler for target data.</p></li>
+<li><p>get_data_loaders(batch_size=32): Get the data loader for training, testing and validation.</p></li>
+<li><p>inverse_scale_target(target): Reverse the predicted value back to the original scale by using the scaler from ‘get_y_scaler()’.</p></li>
+</ul>
 </dd>
 </dl>
 <dl class="py method">

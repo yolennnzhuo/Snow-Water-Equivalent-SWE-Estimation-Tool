@@ -81,25 +81,31 @@ For ‘countries’, it should be a country name; for ‘snowclass’, it should
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">predictLSTM.</span></span><span class="sig-name descname"><span class="pre">predictLSTM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/Users/yz6622/Desktop/IRP/models/global_model.pth'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'general'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sub_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#predictLSTM.predictLSTM" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A class designed to use a pre-trained LSTM Model to predict SWE value.</p>
-<dl>
-<dt>Attributes:</dt><dd><p>country_models: A dictionary where store the LSTM models based on countries.
-snowclass_models: A dictionary where store the LSTM models based on snow classes.
-type: The general category of the model.
-sub_type: The further specific category based on the ‘type’.
-model: The pre-trained LSTM model.</p>
+<dl class="simple">
+<dt>Attributes:</dt><dd><ul class="simple">
+<li><p>country_models: A dictionary where store the LSTM models based on countries.</p></li>
+<li><p>snowclass_models: A dictionary where store the LSTM models based on snow classes.</p></li>
+<li><p>type: The general category of the model.</p></li>
+<li><p>sub_type: The further specific category based on the ‘type’.</p></li>
+<li><p>model: The pre-trained LSTM model.</p></li>
+</ul>
 </dd>
-<dt>Methods:</dt><dd><p>__call__: Make the instance to use the appropriate prediction method.
-add_country_model(x): Ensemble all the LSTM models based on countries by adding to dictionary.
-add_snowclass_model(x): Ensemble all the LSTM models based on different snow classes by adding to dictionary.
-predict_by_country(x): Apply the ensemble LSTM models with a specific location to</p>
-<blockquote>
-<div><p>predict the SWE.</p>
-</div></blockquote>
-<p>predict_by_snowclass(x): Apply the ensemble LSTM models with a specific snow class to predict the SWE.
-predict_by_general(x): Apply the general LSTM models to predict the SWE (The model is trained</p>
-<blockquote>
-<div><p>on the whole dataset - across countries).</p>
-</div></blockquote>
+<dt>Methods:</dt><dd><ul class="simple">
+<li><p>__call__: Make the instance to use the appropriate prediction method.</p></li>
+<li><p>add_country_model(x): Ensemble all the LSTM models based on countries by adding to dictionary.</p></li>
+<li><p>add_snowclass_model(x): Ensemble all the LSTM models based on different snow classes by adding to dictionary.</p></li>
+<li><dl class="simple">
+<dt>predict_by_country(x): Apply the ensemble LSTM models with a specific location to </dt><dd><p>predict the SWE.</p>
+</dd>
+</dl>
+</li>
+<li><p>predict_by_snowclass(x): Apply the ensemble LSTM models with a specific snow class to predict the SWE.</p></li>
+<li><dl class="simple">
+<dt>predict_by_general(x): Apply the general LSTM models to predict the SWE (The model is trained </dt><dd><p>on the whole dataset - across countries).</p>
+</dd>
+</dl>
+</li>
+</ul>
 </dd>
 </dl>
 <dl class="py method">

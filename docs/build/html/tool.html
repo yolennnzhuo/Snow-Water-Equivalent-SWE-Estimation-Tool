@@ -352,6 +352,46 @@ and stations.</p>
 <span class="sig-prename descclassname"><span class="pre">tool.</span></span><span class="sig-name descname"><span class="pre">t_test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">perf_null</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">perf_modif</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tool.t_test" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="tool.train">
+<span class="sig-prename descclassname"><span class="pre">tool.</span></span><span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df_test</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['HS']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_dims</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[60,</span> <span class="pre">30]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_epochs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">60</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_early_stop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tool.train" title="Link to this definition">¶</a></dt>
+<dd><p>Trains an LSTM model using the training data and parameters, then plot the loss function, and evaluate it on the 
+testing set.</p>
+<p>Notes:
+This function performs the following steps:
+1. Data pre-processing: Converts dataframes or files into sweData.
+2. Model building: Initialises an LSTM model with the given parameters.
+3. Training: Trains the model using the training data.
+4. Loss plotting: Plots the training and validation losses over epochs.
+5. Evaluation: Evaluates the model performance on the test data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pandas.Dataframe</em><em>, </em><em>optional</em>) – The input data to train the model, default is None. (Either df or train_file must be provided, but not both.)</p></li>
+<li><p><strong>df_test</strong> (<em>pandas.Dataframe</em><em>, </em><em>optional</em>) – The input data to test the model, default is None. (Either df_test or test_file must be provided, but not both.)</p></li>
+<li><p><strong>train_file</strong> (<em>str</em><em>, </em><em>optional</em>) – The csv file path to load the data for training, default is None.</p></li>
+<li><p><strong>test_file</strong> (<em>str</em><em>, </em><em>optional</em>) – The csv file path to load the data for testing, default is None.</p></li>
+<li><p><strong>var</strong> (<em>list</em><em>, </em><em>optional</em>) – The features required for training, default is [‘HS’].</p></li>
+<li><p><strong>hidden_dims</strong> (<em>list</em><em>, </em><em>optional</em>) – The dimensionality of hidden layers, default is [60, 30].</p></li>
+<li><p><strong>num_epochs</strong> (<em>int</em><em>, </em><em>optional</em>) – The number of epoches runs for training, default is 60.</p></li>
+<li><p><strong>step_size</strong> (<em>int</em><em>, </em><em>optional</em>) – Step size for the learning rate scheduler. Default is 10.</p></li>
+<li><p><strong>gamma</strong> (<em>float</em><em>, </em><em>optional</em>) – Factor of learning rate decay. Default is 0.5.</p></li>
+<li><p><strong>ts</strong> (<em>int</em><em>, </em><em>optional</em>) – The time sequence length, the number of time steps to be considered in model, default is 30.</p></li>
+<li><p><strong>lr</strong> (<em>float</em><em>, </em><em>optional</em>) – The initial learning rate, default is 0.001.</p></li>
+<li><p><strong>is_early_stop</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to use early stopping during training. Default is True.</p></li>
+<li><p><strong>threshold</strong> (<em>int</em><em>, </em><em>optional</em>) – Threshold for early stopping. Default is 20.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Trained LSTM model, RMSE (Root Mean Squared Error), MAE (Mean Absolute Error), 
+MBE (Mean Bias Error), KGE (Kling-Gupta Efficiency), and R^2 score.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple(torch.nn.Module, float, float, float, float, float)</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
 

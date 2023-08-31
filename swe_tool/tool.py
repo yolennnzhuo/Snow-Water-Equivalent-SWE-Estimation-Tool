@@ -1,9 +1,11 @@
 # Name: Yulin Zhuo 
 # Github username: edsml-yz6622
 
-from swe_tool import models
+import models
+import sweDataset
 import numpy as np
 import pandas as pd
+from torch import nn
 import matplotlib.pyplot as plt
 import torch
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
@@ -14,11 +16,9 @@ import cartopy.crs as ccrs
 from matplotlib.colors import ListedColormap
 from matplotlib.patches import Patch
 import matplotlib.dates as mdates
-from torch import nn
+from captum.attr import IntegratedGradients
 from torch.optim import Adam
 from torch.optim.lr_scheduler import StepLR
-from captum.attr import IntegratedGradients
-import random
 from scipy import stats
 
 def mean_bias_error(y_true, y_pred):
@@ -355,6 +355,73 @@ def evaluate_model(test_loader, model, dataset):
     return rmse_test, mae_test, mbe_test, r2_test, kge_test, y_test_ori, test_pred
 
 
+def train(df=None, df_test=None, train_file=None, test_file=None, var=['HS'], hidden_dims=[60,30], num_epochs=60, 
+          step_size=10, gamma=0.5, ts=30, lr=0.001, is_early_stop=True, threshold=20):   
+    """
+    Trains an LSTM model using the training data and parameters, then plot the loss function, and evaluate it on the 
+    testing set.
+
+    Notes:
+    This function performs the following steps:
+    1. Data pre-processing: Converts dataframes or files into sweData.
+    2. Model building: Initialises an LSTM model with the given parameters.
+    3. Training: Trains the model using the training data.
+    4. Loss plotting: Plots the training and validation losses over epochs.
+    5. Evaluation: Evaluates the model performance on the test data.
+
+    :param df: The input data to train the model, default is None. (Either df or train_file must be provided, but not both.)
+    :type df: pandas.Dataframe, optional
+    :param df_test: The input data to test the model, default is None. (Either df_test or test_file must be provided, but not both.)
+    :type df_test: pandas.Dataframe, optional
+    :param train_file: The csv file path to load the data for training, default is None.
+    :type train_file: str, optional
+    :param test_file: The csv file path to load the data for testing, default is None.
+    :type test_file: str, optional
+    :param var: The features required for training, default is ['HS'].
+    :type var: list, optional
+    :param hidden_dims: The dimensionality of hidden layers, default is [60, 30].
+    :type hidden_dims: list, optional
+    :param num_epochs: The number of epoches runs for training, default is 60.
+    :type num_epochs: int, optional
+    :param step_size: Step size for the learning rate scheduler. Default is 10.
+    :type step_size: int, optional
+    :param gamma: Factor of learning rate decay. Default is 0.5.
+    :type gamma: float, optional
+    :param ts: The time sequence length, the number of time steps to be considered in model, default is 30.
+    :type ts: int, optional  
+    :param lr: The initial learning rate, default is 0.001.
+    :type lr: float, optional  
+    :param is_early_stop: Whether to use early stopping during training. Default is True.
+    :type is_early_stop: bool, optional
+    :param threshold: Threshold for early stopping. Default is 20.
+    :type threshold: int, optional
+
+    :return: Trained LSTM model, RMSE (Root Mean Squared Error), MAE (Mean Absolute Error), 
+             MBE (Mean Bias Error), KGE (Kling-Gupta Efficiency), and R^2 score.
+    :rtype: tuple(torch.nn.Module, float, float, float, float, float)
+    """
+    # Data preprocess
+    dataset = sweDataset.sweDataset(df=df, df_test=df_test, train_file=train_file, test_file=test_file, var=var, ts=ts)
+    train_loader, val_loader, test_loader = dataset.get_data_loaders() 
+
+    # Build model
+    model = models.LSTM(input_dim=len(var), hidden_dims=hidden_dims, num_epochs=num_epochs)    
+    criterion = nn.MSELoss()
+    optimiser = Adam(model.parameters(), lr=lr)
+    scheduler = StepLR(optimiser, step_size=step_size, gamma=gamma)
+
+    # Train
+    train_losses, val_losses = models.train_model(model, ts, len(var), train_loader, val_loader,
+                                                  optimiser, criterion, scheduler,is_early_stop, threshold)
+
+    # Plot the loss function
+    plot_loss(train_losses, val_losses)
+
+    # Evaluate
+    rmse_test, mae_test, mbe_test, kge_test, r2_test, _, _ = evaluate_model(test_loader, model, dataset)
+    
+    return model, rmse_test, mae_test, mbe_test, kge_test, r2_test 
+
 def grid_search(hyper_para, df=None, df_test=None, train_file=None, test_file=None, var=['HS'], ts=30, hidden_dims=[50], 
                 num_epochs=60, step_size=10, gamma=0.5, lr=0.001, is_early_stop=True, threshold=20, hyper_type = "ts"):
     """
@@ -412,7 +479,7 @@ def grid_search(hyper_para, df=None, df_test=None, train_file=None, test_file=No
         else:
             raise ValueError("'hyper_type' should either be 'ts' or 'architecture'.") 
         # Train the model
-        _, rmse_test, mae_test, mbe_test, kge_test, r2_test = models.train(df=df, df_test=df_test, train_file=train_file, 
+        _, rmse_test, mae_test, mbe_test, kge_test, r2_test = train(df=df, df_test=df_test, train_file=train_file, 
                                                             test_file=test_file, var=var, hidden_dims=hidden_dims, 
                                                             num_epochs=num_epochs, step_size=step_size,
                                                             gamma=gamma, ts=ts, lr=lr, is_early_stop=is_early_stop,

@@ -4,7 +4,7 @@
 import numpy as np
 import pandas as pd
 from torch.utils.data import Dataset, TensorDataset, DataLoader
-from swe_tool import tool
+import tool
 import torch
 
 class sweDataset(Dataset):
@@ -16,25 +16,25 @@ class sweDataset(Dataset):
     externally and then pass it into this class through a file (df).
 
     Attributes:
-        df: The input data to train the model. (Either df or train_file must be provided, but not both.)
-        df_test: The input data to test the model. (Either df_test or test_file must be provided, but not both.)
-        train_file: The file path to load the data for training.
-        test_file: The file path to load the data for testing.
-        var: The features required for training.
-        ts: The time sequence length, the number of time steps to be considered in model.
-        X_train, X_val, X_test: Input data for training, validation, and testing respectively.
-        y_train, y_val, y_test: Target data for training, validation, and testing respectively.
-        scaler_temp: Scaler used for 'temperature'.
-        scaler_minmax: Scaler used for certain features ('HS', 'precipitation', 'snowfall', 'solar_radiation').
-        scaler_y: Scaler used for 'station_SWE' feature.
+        - df: The input data to train the model. (Either df or train_file must be provided, but not both.)
+        - df_test: The input data to test the model. (Either df_test or test_file must be provided, but not both.)
+        - train_file: The file path to load the data for training.
+        - test_file: The file path to load the data for testing.
+        - var: The features required for training.
+        - ts: The time sequence length, the number of time steps to be considered in model.
+        - X_train, X_val, X_test: Input data for training, validation, and testing respectively.
+        - y_train, y_val, y_test: Target data for training, validation, and testing respectively.
+        - scaler_temp: Scaler used for 'temperature'.
+        - scaler_minmax: Scaler used for certain features ('HS', 'precipitation', 'snowfall', 'solar_radiation').
+        - scaler_y: Scaler used for 'station_SWE' feature.
 
     Methods:
-        load_data(df, file_path): Load data either from a dataframe or a file path.
-        scale_train_data(): Scale the training data.
-        scale_test_data(): Scale the testing data.
-        get_y_scaler(): Get the scaler for target data.
-        get_data_loaders(batch_size=32): Get the data loader for training, testing and validation.
-        inverse_scale_target(target): Reverse the predicted value back to the original scale by using the scaler from 'get_y_scaler()'.
+        - load_data(df, file_path): Load data either from a dataframe or a file path.
+        - scale_train_data(): Scale the training data.
+        - scale_test_data(): Scale the testing data.
+        - get_y_scaler(): Get the scaler for target data.
+        - get_data_loaders(batch_size=32): Get the data loader for training, testing and validation.
+        - inverse_scale_target(target): Reverse the predicted value back to the original scale by using the scaler from 'get_y_scaler()'.
     """
     def __init__(self, df=None, df_test=None, train_file=None, test_file=None, var=['HS'], ts=30):
         """
