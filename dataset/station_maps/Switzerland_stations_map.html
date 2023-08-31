@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    
+        <script>
+            L_NO_TOUCH = false;
+            L_DISABLE_3D = false;
+        </script>
+    
+    <style>html, body {width: 100%;height: 100%;margin: 0;padding: 0;}</style>
+    <style>#map {position:absolute;top:0;bottom:0;right:0;left:0;}</style>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_b4226a062639012f571259531b610057 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+        
+</head>
+<body>
+    
+    
+            <div class="folium-map" id="map_b4226a062639012f571259531b610057" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_b4226a062639012f571259531b610057 = L.map(
+                "map_b4226a062639012f571259531b610057",
+                {
+                    center: [46.0, 7.0],
+                    crs: L.CRS.EPSG3857,
+                    zoom: 6,
+                    zoomControl: true,
+                    preferCanvas: false,
+                    worldCopyJump: false,
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_1fd7d1673bc29447864380b171ca441e = L.tileLayer(
+                "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {"attribution": "Data by \u0026copy; \u003ca target=\"_blank\" href=\"http://openstreetmap.org\"\u003eOpenStreetMap\u003c/a\u003e, under \u003ca target=\"_blank\" href=\"http://www.openstreetmap.org/copyright\"\u003eODbL\u003c/a\u003e.", "detectRetina": false, "maxNativeZoom": 10, "maxZoom": 10, "minZoom": 4, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
+            ).addTo(map_b4226a062639012f571259531b610057);
+        
+    
+
+        function geo_json_6c799e30a53d2dfd0ec2afdf47dfba43_onEachFeature(feature, layer) {
+            layer.on({
+            });
+        };
+        var geo_json_6c799e30a53d2dfd0ec2afdf47dfba43 = L.geoJson(null, {
+                onEachFeature: geo_json_6c799e30a53d2dfd0ec2afdf47dfba43_onEachFeature,
+            
+        });
+
+        function geo_json_6c799e30a53d2dfd0ec2afdf47dfba43_add (data) {
+            geo_json_6c799e30a53d2dfd0ec2afdf47dfba43
+                .addData(data)
+                .addTo(map_b4226a062639012f571259531b610057);
+        }
+            geo_json_6c799e30a53d2dfd0ec2afdf47dfba43_add({"bbox": [6.022609490593538, 45.776947740250776, 10.44270145024663, 47.83082754169129], "features": [{"bbox": [6.022609490593538, 45.776947740250776, 10.44270145024663, 47.83082754169129], "geometry": {"coordinates": [[[9.59422610844635, 47.52505809182027], [9.632931756232978, 47.34760122332999], [9.479969516649021, 47.102809963563374], [9.932448357796659, 46.92072805438296], [10.44270145024663, 46.89354625099743], [10.363378126678612, 46.48357127540986], [9.922836541390382, 46.31489940040919], [9.182881707403055, 46.44021474871698], [8.966305779667806, 46.03693187111119], [8.489952426801324, 46.005150865251686], [8.31662967289438, 46.16364248309086], [7.7559920589598335, 45.82449005795931], [7.2738509456766565, 45.776947740250776], [6.843592970414505, 45.99114655210061], [6.5000997249704255, 46.42967275652944], [6.022609490593538, 46.27298981382047], [6.037388950229001, 46.725778713561866], [6.768713820023606, 47.2877082383037], [6.736571079138059, 47.541801255882845], [7.192202182655507, 47.44976552997102], [7.466759067422231, 47.62058197691181], [8.317301466514095, 47.61357982033627], [8.522611932009767, 47.83082754169129], [9.59422610844635, 47.52505809182027]]], "type": "Polygon"}, "id": "127", "properties": {"continent": "Europe", "gdp_md_est": 703082, "iso_a3": "CHE", "name": "Switzerland", "pop_est": 8574832.0}, "type": "Feature"}], "type": "FeatureCollection"});
+
+        
+    
+            var marker_d5b5368f822a913e8e8cf7d92301a9e6 = L.marker(
+                [46.8297, 9.8094],
+                {}
+            ).addTo(map_b4226a062639012f571259531b610057);
+        
+    
+            marker_d5b5368f822a913e8e8cf7d92301a9e6.bindTooltip(
+                `<div>
+                     gps2
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_323a536f07cfd2a8686c0a98edb77a4c = L.marker(
+                [46.8297, 9.8094],
+                {}
+            ).addTo(map_b4226a062639012f571259531b610057);
+        
+    
+            marker_323a536f07cfd2a8686c0a98edb77a4c.bindTooltip(
+                `<div>
+                     gps1
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_fb7f90e31aca158668d2e66194a837a8 = L.marker(
+                [46.8297, 9.8094],
+                {}
+            ).addTo(map_b4226a062639012f571259531b610057);
+        
+    
+            marker_fb7f90e31aca158668d2e66194a837a8.bindTooltip(
+                `<div>
+                     wfj
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_4d1222dab6c736a0a39eef520d6475df = L.marker(
+                [46.8636, 9.8881],
+                {}
+            ).addTo(map_b4226a062639012f571259531b610057);
+        
+    
+            marker_4d1222dab6c736a0a39eef520d6475df.bindTooltip(
+                `<div>
+                     klo
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+                var lat_lng_popup_ac246699509eaab0b4658c6429a589d0 = L.popup();
+                function latLngPop(e) {
+                    lat_lng_popup_ac246699509eaab0b4658c6429a589d0
+                        .setLatLng(e.latlng)
+                        .setContent("Latitude: " + e.latlng.lat.toFixed(4) +
+                                    "<br>Longitude: " + e.latlng.lng.toFixed(4))
+                        .openOn(map_b4226a062639012f571259531b610057);
+                    }
+                map_b4226a062639012f571259531b610057.on('click', latLngPop);
+            
+</script>
+</html>

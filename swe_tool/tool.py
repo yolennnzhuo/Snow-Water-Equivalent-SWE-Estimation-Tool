@@ -1,6 +1,7 @@
 # Name: Yulin Zhuo 
 # Github username: edsml-yz6622
 
+from swe_tool import models
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -11,6 +12,14 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 import rasterio
 import cartopy.crs as ccrs
 from matplotlib.colors import ListedColormap
+from matplotlib.patches import Patch
+import matplotlib.dates as mdates
+from torch import nn
+from torch.optim import Adam
+from torch.optim.lr_scheduler import StepLR
+from captum.attr import IntegratedGradients
+import random
+from scipy import stats
 
 def mean_bias_error(y_true, y_pred):
     """
@@ -205,9 +214,9 @@ def kge(real, pred):
     """
     # Reshape the input into one dim
     r = np.corrcoef(pred, real)[0,1]
-    alpha = np.std(pred) / np.std(real)
-    beta = np.mean(pred) / np.mean(real)
-    kge = 1 - np.sqrt((r-1)**2 + (alpha-1)**2 + (beta-1)**2)
+    beta = np.std(pred) / np.std(real)
+    gamma = np.mean(pred) / np.mean(real)
+    kge = 1 - np.sqrt((r-1)**2 + (beta-1)**2 + (gamma-1)**2)
     return kge
 
 def plot_loss(train_losses, val_losses):
@@ -247,28 +256,46 @@ def plot_scatter(y_test_ori, test_pred):
     plt.plot([min(y_test_ori), max(y_test_ori)], [min(y_test_ori), max(y_test_ori)], color='red')  
     plt.show()
 
-def plot_time_series(true_values, predictions, dates=None):
+def plot_time_series(true_values, predictions_1, predictions_2=None, dates=None):
     """
     Plots the true and predicted SWE values over time.
+
     :param true_values: The ground truth SWE values.
-    :param predictions: The predicted SWE values.
+    :type true_values: numpy.array or list
+    :param predictions_1: The predicted SWE values.
+    :type predictions_1: numpy.array or list
+    :param predictions_2: The second predicted SWE values.
+    :type predictions_2: numpy.array or list, optional
     :param dates: The dates corresponding to the values. If None, will use integer indices.
+    :type dates: list, optional
     """
     if dates is not None:
         dates = list(dates)  # Ensure dates is a list
+        if isinstance(dates[0], str):
+            dates = pd.to_datetime(dates)
     else:
         dates = list(range(len(true_values)))
 
+    # Plot the true and predicted values
     fig, ax = plt.subplots(figsize=(15, 6))
     ax.plot(dates, true_values, label="True Values", color='blue')
-    ax.plot(dates, predictions, label="Predicted Values", color='red', linestyle='--')
+    ax.plot(dates, predictions_1, label="Predicted Values by MLSTM", color='green', linestyle='--')
+    
+    if predictions_2 is not None:  # If the third data is provided
+        ax.plot(dates, predictions_2, label="Predicted Values by SLSTM", color='red', linestyle='-.')
+    
     ax.legend()
     ax.set_xlabel("Time")
     ax.set_ylabel('SWE Value')
     ax.set_title("True vs Predicted values over time")
     ax.grid(True)
-    plt.tight_layout()  # Adjust the layout for better view
-    plt.show()
+
+    # Display the dates monthly 
+    if isinstance(dates[0], (str, pd.Timestamp)):
+        locator = mdates.MonthLocator()  
+        formatter = mdates.DateFormatter('%d-%m-%Y') 
+        ax.xaxis.set_major_locator(locator)
+        ax.xaxis.set_major_formatter(formatter)
 
 def evaluate_model(test_loader, model, dataset):
     """
@@ -280,6 +307,11 @@ def evaluate_model(test_loader, model, dataset):
     :type model: torch.nn.Module
     :param dataset: An object containing methods for inversing the data scaling.
     :type dataset: class object
+
+    :return: Tuple of RMSE (Root Mean Squared Error), MAE (Mean Absolute Error), 
+             MBE (Mean Bias Error), KGE (Kling-Gupta Efficiency), and R^2 score,
+             true test data (y_test_ori) and predicted data (test_pred).
+    :rtype: tuple(float, float, float, float, float, np.array, np.array)
     """
     # Evaluation mode
     model.eval()
@@ -323,27 +355,293 @@ def evaluate_model(test_loader, model, dataset):
     return rmse_test, mae_test, mbe_test, r2_test, kge_test, y_test_ori, test_pred
 
 
-def plot_snow_class():
+def grid_search(hyper_para, df=None, df_test=None, train_file=None, test_file=None, var=['HS'], ts=30, hidden_dims=[50], 
+                num_epochs=60, step_size=10, gamma=0.5, lr=0.001, is_early_stop=True, threshold=20, hyper_type = "ts"):
     """
-    Plot the diagram to show the global snow classification according to snow classification scheme introduced by (Liston and Sturm 2021).
+    Conduct grid search over given hyper-parameters and plots the performance metrics.
+
+    Notes:
+    1. This function will loop over the provided hyperparameter values, train a model for each, 
+       and then plot performance metrics (RMSE, MAE, MBE, KGE, R2) for the models.
+    2. If 'hyper_type' is set to "ts", the grid search will be performed over different time series lengths.
+       If set to "architecture", the grid search will be performed over different LSTM architectures.
+
+    :param hyper_para: List of hyperparameters values to search over.
+    :type hyper_para: list
+    :param df: The input data to train the model, default is None. (Either df or train_file must be provided, but not both.)
+    :type df: pandas.Dataframe, optional
+    :param df_test: The input data to test the model, default is None. (Either df_test or test_file must be provided, but not both.)
+    :type df_test: pandas.Dataframe, optional
+    :param train_file: The csv file path to load the data for training, default is None.
+    :type train_file: str, optional
+    :param test_file: The csv file path to load the data for testing, default is None.
+    :type test_file: str, optional
+    :param var: The features required for training, default is ['HS'].
+    :type var: list, optional
+    :param ts: The time sequence length, the number of time steps to be considered in model, default is 30.
+    :type ts: int, optional  
+    :param hidden_dims: The dimensionality of hidden layers, default is [60, 30].
+    :type hidden_dims: list, optional
+    :param num_epochs: The number of epoches runs for training, default is 60.
+    :type num_epochs: int, optional
+    :param step_size: Step size for the learning rate scheduler. Default is 10.
+    :type step_size: int, optional
+    :param gamma: Factor of learning rate decay. Default is 0.5.
+    :type gamma: float, optional
+    :param is_early_stop: Whether to use early stopping during training. Default is True.
+    :type is_early_stop: bool, optional
+    :param threshold: Threshold for early stopping. Default is 20.
+    :type threshold: int, optional
+    :param hyper_type: Type of hyperparameters to search over, default is 'ts'.
+    :type hyper_type: str, optional
+    """
+    # Define variables
+    results_rmse = []
+    results_mae = []
+    results_mbe = []
+    results_kge = []
+    results_r2 = []
+
+    # If wants to do the grid search on time series
+    for i in range(len(hyper_para)):
+        # Define the hyper-parameter type
+        if hyper_type == "ts":
+            ts = hyper_para[i]
+        elif hyper_type == "architecture":
+            hidden_dims = hyper_para[i]
+        else:
+            raise ValueError("'hyper_type' should either be 'ts' or 'architecture'.") 
+        # Train the model
+        _, rmse_test, mae_test, mbe_test, kge_test, r2_test = models.train(df=df, df_test=df_test, train_file=train_file, 
+                                                            test_file=test_file, var=var, hidden_dims=hidden_dims, 
+                                                            num_epochs=num_epochs, step_size=step_size,
+                                                            gamma=gamma, ts=ts, lr=lr, is_early_stop=is_early_stop,
+                                                            threshold=threshold)
+        # Append results together
+        results_rmse.append(rmse_test)
+        results_mae.append(mae_test)  
+        results_mbe.append(mbe_test)    
+        results_kge.append(kge_test)    
+        results_r2.append(r2_test)    
+        # Convert result into dictionary
+        results = {
+        "RMSE": results_rmse,
+        "MAE": results_mae,
+        "MBE": results_mbe,
+        "KGE": results_kge,
+        "R2": results_r2
+    }
+
+    return results
+
+def plot_grid_search(hyper_para, hyper_type, results):
+    """
+    Plot the results of grid search.
+    """
+    # Plot the overall diagrams
+    fig, axs = plt.subplots(2, 3, figsize=(18, 12)) 
+    hyper_para = hyper_para if hyper_type == "ts" else ["[50]", "[60,30]","[70,50,30]","[70,50,30,10]"]
+    xlabel = 'Time length' if hyper_type == "ts" else 'Architecture' 
+
+    axs[0, 0].plot(hyper_para, results['RMSE'], label="RMSE", color='tab:blue', marker='o')
+    axs[0, 0].set_title('RMSE')
+    axs[0, 0].set_xlabel(xlabel)
+    axs[0, 0].set_ylabel('RMSE')
+
+    axs[0, 1].plot(hyper_para, results['MAE'], label="MAE", color='tab:orange', marker='o')
+    axs[0, 1].set_title('MAE')
+    axs[0, 1].set_xlabel(xlabel)
+    axs[0, 1].set_ylabel('MAE')
+
+    axs[0, 2].plot(hyper_para, results['MBE'], label="MBE", color='tab:green', marker='o')
+    axs[0, 2].set_title('MBE')
+    axs[0, 2].set_xlabel(xlabel)
+    axs[0, 2].set_ylabel('MBE')
+
+    axs[1, 0].plot(hyper_para, results['KGE'], label="KGE", color='tab:red', marker='o')
+    axs[1, 0].set_title('KGE')
+    axs[1, 0].set_xlabel(xlabel)
+    axs[1, 0].set_ylabel('KGE')
+
+    axs[1, 1].plot(hyper_para, results['R2'], label="R2", color='tab:purple', marker='o')
+    axs[1, 1].set_title('R2')
+    axs[1, 1].set_xlabel(xlabel)
+    axs[1, 1].set_ylabel('R2')
+
+    axs[1, 2].axis('off')
+
+    fig.suptitle('Performance Metrics for Different Time Sequence Length', fontsize=16)
+
+    plt.tight_layout()
+    plt.subplots_adjust(top=0.90)  
+    plt.show()
+
+def cal_integrated_gradients(model, X):
+    """
+    Calculate the Integrated Gradients attribution for the given model and input data.
+
+    :param model: The trained model whose attributions being calculated.
+    :type model: torch.nn.Module
+    :param X: The input data of which feature attributions being computed.
+    :type X: torch.Tensor
+
+    :return: attr, which is the attributions for each feature in the input data.  
+    :rtype: torch.Tensor
+    """
+    ig = IntegratedGradients(model)
+    attr, _ = ig.attribute(X, return_convergence_delta=True)
+    return attr 
+
+def cal_attr(attr):
+    """
+    Calculate the mean and sum of Integrated Gradients attributions for the given attributions.
+
+    :param attr: Attributions tensor calculating from Integrated Gradients methods.
+    :type attr: numpy.ndarray or a list
+
+    :return: tuple of (mean_attr, sum_attr) - Mean and sum of the attributions across the specified dimensions.  
+    :rtype: tuple of (torch.Tensor, torch.Tensor)
+    """
+    if not isinstance(attr, torch.Tensor):
+        attr = torch.tensor(attr)
+
+    mean_attr = torch.mean(attr, dim=(0, 1))
+    sum_attr = torch.sum(attr, dim=(0, 1))
+
+    return mean_attr, sum_attr
+
+def plot_attribution(attribution, feature_names, title="Feature Importances", show_percentage=True, shift=6):
+    """
+    Plot the attribution of each feature.
+    """
+    # Sort the abs mean value of each features
+    sorted_indices = np.argsort(abs(attribution))
+    sorted_attribution = attribution[sorted_indices]
+    sorted_feature_names = [feature_names[i] for i in sorted_indices]
+
+    # Define colors
+    colors = ['red' if val < 0 else 'blue' for val in sorted_attribution]
+
+    # Plot bar
+    plt.figure(figsize=(14, 5))
+    plt.xlabel("Mean Attribution")
+    plt.ylabel("Features")
+    plt.title(title)
+
+    # Adding the attribution values next to the bars
+    if show_percentage:
+        bars = plt.barh(sorted_feature_names, sorted_attribution, color=colors, alpha=0.7, height=0.8)
+        for bar in bars:
+            width = bar.get_width()
+            label_text = f'{width:.2f}'
+            if width < 0:
+                label_x = width - shift
+            else:
+                label_x = width + shift
+
+            plt.text(label_x, bar.get_y() + bar.get_height() / 2, label_text,
+                     va='center', ha='center', color='black', fontsize=10)
+    
+    # Add the legend and labels
+    handles = [plt.Rectangle((0,0),1,1, color=color, ec="k") for color in ['red', 'blue']]
+    labels= ["Negative Attribution", "Positive Attribution"]
+    plt.legend(handles, labels, loc='lower right')
+    plt.tight_layout()
+    plt.show()
+
+def plot_attr_over_time(attr, feature_idx):
+    """
+    Plot the attribution of one feature ('HS') over time.
+    """
+    feature_attr = torch.mean((attr[:, :, feature_idx]), dim=(0)).detach().numpy()
+    ts = list(range(len(feature_attr)))
+
+    plt.figure(figsize=(10, 5))
+    plt.plot(ts, feature_attr)
+
+    plt.xlabel('Time Step')
+    plt.ylabel('Attribution')
+    plt.title("Feature Attribution over Time")
+    plt.show()
+
+def t_test(perf_null, perf_modif):
+    t_stat, p_val = stats.ttest_rel(perf_null, perf_modif)
+
+    print(f'T-statistic: {t_stat}')
+    print(f'P-value: {p_val}')
+
+    if p_val < 0.05:
+        print('p-value is less than 0.05, hence the modification show significant improvement.')
+    else:
+        print('p-value is larger than 0.05, hence the modification does not show significant improvement.')    
+
+def plot_data_distribution(HS_df, target_values_df):
+    """
+    Plot the records distribution across months.
+    """
+    fig, axarr = plt.subplots(1, 3, figsize=(25, 5))
+
+    # (a) snow depth
+    HS_df['HS'].plot(kind='hist', ax=axarr[0], bins=30, edgecolor='black')
+    axarr[0].set_title('(d) Filtered Snow Depth')
+    axarr[0].set_xlabel('Snow Depth in cm')
+
+    # (b) SWE
+    target_values_df['station_SWE'].plot(kind='hist', ax=axarr[1], bins=30, edgecolor='black')
+    axarr[1].set_title('(e) Filtered SWE')
+    axarr[1].set_xlabel('Snow Water Equivalent in cm')
+
+    # (c) month distribution
+    target_values_df = target_values_df.copy()
+    target_values_df['date'] = pd.to_datetime(target_values_df['date'])
+    target_values_df['month'] = target_values_df['date'].dt.month
+    monthly_counts = target_values_df.groupby('month').size()
+    
+    order = list(range(10, 13)) + list(range(1, 10))
+    ordered_counts = monthly_counts.loc[order]
+    
+    ordered_counts.plot(kind='bar', ax=axarr[2], edgecolor='black')
+    axarr[2].set_title('Filtered Number of Records by Month')
+    axarr[2].set_xlabel('Month of records')
+    axarr[2].set_xticks(range(12))
+    axarr[2].set_xticklabels(['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'], rotation=45)
+    
+    plt.tight_layout()
+    plt.show()
+    
+def plot_snow_class(path='../dataset/SnowClass_GL_50km_0.50degree_2021_v01.0.tif', stations_csv='../dataset/stations_loc.csv'):
+    """
+    Plot the diagram to show the global snow classification according to snow classification scheme introduced by (Liston and Sturm 2021)
+    and stations.
     """
     # Open file
-    with rasterio.open('/Users/yz6622/Desktop/IRP/dataset/SnowClass_GL_50km_0.50degree_2021_v01.0.tif') as src:
+    with rasterio.open(path) as src:
         snow_class_array = src.read(1) 
         snow_class_transform = src.transform 
-        snow_class_crs = src.crs  
+        snow_class_crs = src.crs
 
-    cmap = ListedColormap(['red', 'green', 'orange', 'yellow', 'blue', 'cyan'])  
+    cmap = ListedColormap(['lightcoral', 'lightgreen', 'orange', 'lightyellow', 'lightskyblue', 'pink','plum','cyan'])  
 
     # Create map
     fig = plt.figure(figsize=(20, 10))
     ax = fig.add_subplot(1, 1, 1, projection=ccrs.PlateCarree()) 
     ax.set_global() 
     ax.coastlines() 
+    
+    # Set to display only the region from North America to Europe
+    ax.set_extent([-150, 40, 20, 100], crs=ccrs.PlateCarree())
 
     # Show data
     img = ax.imshow(snow_class_array, origin='upper', extent=[-180, 180, -90, 90], transform=ccrs.PlateCarree(), cmap=cmap)
-    cbar = plt.colorbar(img, ax=ax, orientation='horizontal', pad=0.03)
-    cbar.set_label('Snow Class')
+    
+    # Load stations data and plot them
+    stations = pd.read_csv(stations_csv)
+    ax.scatter(stations['long'], stations['lat'], s=70, c='black', marker='*', transform=ccrs.PlateCarree(), label='Station')
+
+    # Create legend
+    legend_colors = ['lightcoral', 'lightgreen', 'orange', 'lightyellow', 'lightskyblue', 'pink','plum','cyan']
+    legend_labels = ['1-Tundra', '2-Boreal Forest', '3-Maritime', '4-Ephemeral (includes no snow)', '5-Prairie', '6-Montane Forest', '7-Ice', '8-Ocean']  
+    legend_patches = [Patch(color=color, label=label) for color, label in zip(legend_colors, legend_labels)]
+    ax.legend(handles=legend_patches + [Patch(color='black', label='Station')], loc='upper right')
 
     plt.show()

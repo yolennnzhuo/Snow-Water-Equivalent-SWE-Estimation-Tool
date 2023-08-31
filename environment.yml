@@ -7,10 +7,14 @@ dependencies:
   - numpy>=1.13.0
   - pandas
   - matplotlib
-  - torch
+  - seaborn
+  - scipy
+  - folium
   - scikit-learn
+  - torch
   - rasterio
   - cartopy
   - pytest
+  - sphinx
   - pip:
-   - -r requirements.txt
+      - -r requirements.txt

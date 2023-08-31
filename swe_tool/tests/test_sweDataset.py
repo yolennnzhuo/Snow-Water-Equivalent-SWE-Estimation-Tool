@@ -91,7 +91,29 @@ class TestSweDataset():
         """
         with pytest.raises(ValueError, match="Either input dataframe or file path must be provided."):
             _ = sweDataset()
-    
+
+    # Check the functionality of interpolate_data()
+    def test_interpolate_data(self):
+        """
+        Test functionality of interpolating the data.
+        """
+        # Create a test dataframe with missing values
+        data = {
+            'date': ["2023-01-01", "2023-01-02", "2023-01-03"],
+            'station_SWE': [10, np.nan, 12]
+        }
+        miss_df = pd.DataFrame(data)
+        miss_df['date'] = pd.to_datetime(miss_df['date'])
+        miss_df.set_index('date', inplace=True)
+
+        # Apply interpolation
+        interpolated_df = self.df_file.interpolate_data(df=miss_df, var=['station_SWE'])
+        
+        # Assertions
+        assert isinstance(interpolated_df, pd.DataFrame), "Unexpected output data type."
+        assert interpolated_df['station_SWE'].isnull().sum() == 0, "There are still missing values after interpolation."
+        assert interpolated_df['station_SWE'][1] == 11, "Interpolation did not work as expected."
+        
     # Check the output type of get_y_scaler()
     def test_get_y_scaler(self):
         """

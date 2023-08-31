@@ -2,7 +2,7 @@
 # Github username: edsml-yz6622
 
 import torch
-from models import LSTM
+from swe_tool.models import LSTM
 import numpy as np
 
 class predictLSTM():
