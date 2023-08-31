@@ -1,4 +1,4 @@
-# IRP - Snow Water Equivalent(SWE) Estimation Tool
+# IRP - Snow Water Equivalent (SWE) Estimation Tool
 
 The 'SWE_tool' package has been designed to enable quick and easy modelling of SWE, across the regions where snow class is Tundra, Boreal Forest, Maritime, Prairie, and Montane Forest.
 
@@ -18,22 +18,25 @@ The 'SWE_tool' package has been designed to enable quick and easy modelling of S
 
 ### About
 
-Snow Water Equivalent (SWE) is essential for managing water resources, producing hydropower, preventing floods, and more, especially in places like California where the annual April snowpack water storage is almost twice as large as surface water reservoir storage [1]. Accurate estimation of SWE is crucial for a few reasons. It can first help with forecasting snowmelt water. Snowmelt water is used for agriculture and human consumption by about one sixth of the world's population (1.2 billion people) [2]. Furthermore, if the accurate peak SWE value can be provided, it can also aid in early-warning for the flooding.
+Snow Water Equivalent (SWE) is essential for managing water resources, producing hydropower, preventing floods, and more, especially in places like California, where the annual April snowpack water storage is almost twice as large as surface water reservoir storage [1]. An accurate estimation of SWE is crucial for a few reasons. It can first help with forecasting snowmelt water. Snowmelt water is used for agriculture and human consumption by about one sixth of the world's population (1.2 billion people) [2]. Furthermore, if the accurate peak SWE value can be provided, it can also aid in early warning for flooding.
 
 ### Installation Guide
 
-Before installing ‘swe_tool’, ensuree your environment meets the dependencies below:
+Before installing ‘swe_tool’, ensure your environment meets the dependencies below:
 
-- Python > 3.9
-- numpy >= 1.13.0
-- scipy
+- python=3.9
+- numpy>=1.13.0
 - pandas
 - matplotlib
-- torch
+- seaborn
+- scipy
+- folium
 - scikit-learn
+- torch
 - rasterio
 - cartopy
 - pytest
+- sphinx
 
 If you're using conda, you can set up a new environment with the provided command. First, navigate to the tool directory:
 
@@ -58,7 +61,7 @@ pip install .
 The following structure lists the locations of some important files:
 
 ```bash
-project-name/
+irp-yz6622/
 │
 ├── docs/                   # Documentation files and Sphinx source files
 │   ├── build/              # generated HTML files for the documentation
@@ -68,7 +71,7 @@ project-name/
 │   ├── sweDataset.py       # Module for handling the dataset
 │   ├── models.py           # Module defining models
 │   ├── predictLSTM.py      # LSTM prediction file
-│   └── tool.py             # Contain helpful functions, e.g model evaluatation
+│   └── tool.py             # Contain helpful functions, e.g model evaluation
 │
 ├── tests/                  # Intergrating test modules
 │   ├── test_sweDataser.py  # Tests for sweDataset.py
@@ -76,10 +79,14 @@ project-name/
 │   ├── test_predictLSTM.py # Tests for predictLSTM.py
 │   └── test_tool.py        # Tests for tool.py
 │
+├── data_prepare.ipynb      # Project setup and installation script
+├── model_train.ipynb       # Environment configuration file
+├── model_predict.ipynb     # README file
 ├── setup.py                # Project setup and installation script
 ├── environment.yml         # Environment configuration file
 ├── README.md               # README file
 └── LICENSE                 # License file
+
 ```
 
 ### User Instructions
@@ -93,7 +100,7 @@ Make sure you have navigated to the directory where the 'swe_tool' package is lo
 ```bash
 cd /example_path/to/swe_tool_directory
 ```
-Please replace '/path/to/swe_tool_directory' to the actual path to 'swe_tool'.
+Please replace '/path/to/swe_tool_directory' with the actual path to 'swe_tool'.
 
 ### sweDataset.py
 
@@ -105,12 +112,12 @@ Attributes:
 - train_file: The file path to load the data for training.
 - test_file: The file path to load the data for testing.
 - var: The features required for training.
-- ts: The time sequence length, the number of time steps to be considered in model.
+- ts: The time sequence length, the number of time steps to be considered in the model.
 - scaler_y: The scaler used to scale the testing target values.
 
 Methods:
 - get_y_scaler(): Get the scaler for target data.
-- get_data_loaders(): Get the data loader for training, testing and validation.
+- get_data_loaders(): Get the data loader for training, testing, and validation.
 - inverse_scale_target(): Reverse the predicted value back to the original scale by using the scaler from 'get_y_scaler()'.
 
 How to use:
@@ -307,7 +314,7 @@ The following examples shows the usage of some useful functions.
 
 **'plot_time_series'**
 
-The 'plot_time_series' function is designed to plot the true values and predicted values of SWE over time. .
+The 'plot_time_series' function is designed to plot the true values and predicted values of SWE over time.
 
 How to use:
 
@@ -340,6 +347,30 @@ from tool import evaluate_model
 - dataset: A 'sweDataset' object with methods to reverse the scaling.
 ```bash
 rmse_test, mae_test, mbe_test, r2_test, kge_test, y_test_ori, test_pred = evaluate_model(test_loader, model, dataset)
+```
+
+**'Captum'**
+
+The 'Captum' can be used to analyse the weight of each feature within the hidden layers. 'model_train.ipynb' shows an example of using it, we can see more details there.
+
+How to use:
+1. Import the function
+```bash
+from tool import cal_integrated_gradients, cal_attr, plot_attribution
+```
+
+2. Calculate attributes
+- model: The trained model of which the weights of each feature being calculated.
+- X_torch: The input data of which feature attributions being computed.
+```bash
+attr = tool.cal_integrated_gradients(model, X_torch)
+mean_attributions, sum_attributions = tool.cal_attr(attr)
+```
+
+2. Plot attributes
+```bash
+tool.plot_attribution(sum_attributions, feature_names=['Snow depth','Temperature','Precipitation','Snowfall','Solar radiation'],
+                      title = "Feature Importances for Global model", show_percentage=True, shift=4)
 ```
 
 ### Documentation
