@@ -218,6 +218,13 @@ train_losses, val_losses = train_model(
 )
 ```
 
+For 'train' function, ensembles the process of processing data, train model, plot the loss function, and evaluation.
+
+Note: Due to random initialisation, if the loss doesn't decrease, simply re-run the cell or manually execute the provided command and record the results.
+```bash
+model,rmse,mae,mbe,kge,r2= models.train(df=df, df_test=df_test, var=['HS'], hidden_dims=[50], num_epochs=100,  step_size=10, gamma=0.5, ts=30, lr=0.001)
+```
+
 ### predictLSTM.py
 
 Description: The 'predictLSTM' class is designed to predict SWE values using pre-trained LSTM models. You can predict based on different cases such as general, country-specific, or snow class-specific.
