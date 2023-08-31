@@ -5,10 +5,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>swe_tool &#8212; IRP 31.08.2023 documentation</title>
+    <title>LSTM &#8212; IRP 31.08.2023 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b3523f8e" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=039e1c02" />
-    <script src="_static/documentation_options.js?v=7b807efb"></script>
+    <script src="_static/documentation_options.js?v=0b6e6873"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -29,8 +29,8 @@
 
           <div class="body" role="main">
             
-  <section id="swe_tool">
-<h1>swe_tool<a class="headerlink" href="#swe_tool" title="Link to this heading">¶</a></h1>
+  <section id="lstm">
+<h1>LSTM<a class="headerlink" href="#lstm" title="Link to this heading">¶</a></h1>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="models.html">models module</a><ul>
@@ -38,6 +38,7 @@
 <li class="toctree-l3"><a class="reference internal" href="models.html#models.LSTM.forward"><code class="docutils literal notranslate"><span class="pre">LSTM.forward()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="models.html#models.train"><code class="docutils literal notranslate"><span class="pre">train()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="models.html#models.train_model"><code class="docutils literal notranslate"><span class="pre">train_model()</span></code></a></li>
 </ul>
 </li>
@@ -59,17 +60,28 @@
 <li class="toctree-l2"><a class="reference internal" href="sweDataset.html#sweDataset.sweDataset"><code class="docutils literal notranslate"><span class="pre">sweDataset</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="sweDataset.html#sweDataset.sweDataset.get_data_loaders"><code class="docutils literal notranslate"><span class="pre">sweDataset.get_data_loaders()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="sweDataset.html#sweDataset.sweDataset.get_y_scaler"><code class="docutils literal notranslate"><span class="pre">sweDataset.get_y_scaler()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="sweDataset.html#sweDataset.sweDataset.interpolate_data"><code class="docutils literal notranslate"><span class="pre">sweDataset.interpolate_data()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="sweDataset.html#sweDataset.sweDataset.inverse_scale_target"><code class="docutils literal notranslate"><span class="pre">sweDataset.inverse_scale_target()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="sweDataset.html#sweDataset.sweDataset.load_data"><code class="docutils literal notranslate"><span class="pre">sweDataset.load_data()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="sweDataset.html#sweDataset.sweDataset.scale_test_data"><code class="docutils literal notranslate"><span class="pre">sweDataset.scale_test_data()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="sweDataset.html#sweDataset.sweDataset.scale_train_data"><code class="docutils literal notranslate"><span class="pre">sweDataset.scale_train_data()</span></code></a></li>
 </ul>
 </li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="tool.html">tool module</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="tool.html#tool.apply_perturbation"><code class="docutils literal notranslate"><span class="pre">apply_perturbation()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tool.html#tool.cal_attr"><code class="docutils literal notranslate"><span class="pre">cal_attr()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tool.html#tool.cal_integrated_gradients"><code class="docutils literal notranslate"><span class="pre">cal_integrated_gradients()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="tool.html#tool.evaluate_model"><code class="docutils literal notranslate"><span class="pre">evaluate_model()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tool.html#tool.grid_search"><code class="docutils literal notranslate"><span class="pre">grid_search()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="tool.html#tool.kge"><code class="docutils literal notranslate"><span class="pre">kge()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="tool.html#tool.mean_bias_error"><code class="docutils literal notranslate"><span class="pre">mean_bias_error()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="tool.html#tool.minmax_data"><code class="docutils literal notranslate"><span class="pre">minmax_data()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tool.html#tool.plot_attr_over_time"><code class="docutils literal notranslate"><span class="pre">plot_attr_over_time()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tool.html#tool.plot_attribution"><code class="docutils literal notranslate"><span class="pre">plot_attribution()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tool.html#tool.plot_data_distribution"><code class="docutils literal notranslate"><span class="pre">plot_data_distribution()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tool.html#tool.plot_grid_search"><code class="docutils literal notranslate"><span class="pre">plot_grid_search()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="tool.html#tool.plot_loss"><code class="docutils literal notranslate"><span class="pre">plot_loss()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="tool.html#tool.plot_scatter"><code class="docutils literal notranslate"><span class="pre">plot_scatter()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="tool.html#tool.plot_snow_class"><code class="docutils literal notranslate"><span class="pre">plot_snow_class()</span></code></a></li>
@@ -77,6 +89,7 @@
 <li class="toctree-l2"><a class="reference internal" href="tool.html#tool.rebuild_data"><code class="docutils literal notranslate"><span class="pre">rebuild_data()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="tool.html#tool.split_dataset"><code class="docutils literal notranslate"><span class="pre">split_dataset()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="tool.html#tool.standardise_data"><code class="docutils literal notranslate"><span class="pre">standardise_data()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tool.html#tool.t_test"><code class="docutils literal notranslate"><span class="pre">t_test()</span></code></a></li>
 </ul>
 </li>
 </ul>

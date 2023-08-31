@@ -1,6 +1,6 @@
 """Python Snow Water Equivalent Estimation tool"""
 
-from .tool import *
-from .predictLSTM import *
-from .models import *
-from .sweDataset import * 
+from swe_tool import models
+from swe_tool import predictLSTM
+from swe_tool import sweDataset
+from swe_tool import tool

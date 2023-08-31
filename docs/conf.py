@@ -5,22 +5,26 @@
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
+
 import os
 import sys
-sys.path.append(os.path.relpath('../LSTM'))
+sys.path.insert(0, os.path.abspath('../swe_tool'))
 
 project = 'IRP'
 copyright = '2023, Yulin_Zhuo'
 author = 'Yulin_Zhuo'
-release = '23.08.2023'
+release = '31.08.2023'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-extensions = []
+extensions = ['sphinx.ext.autodoc',]
 
 templates_path = ['_templates']
 exclude_patterns = []
+
+autodoc_mock_imports = ['torch']
+exclude_patterns = ['tests']
 
 
 
