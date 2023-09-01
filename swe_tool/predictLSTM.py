@@ -204,8 +204,7 @@ def model_class(type='general', sub_type=None):
         elif sub_type == 'US':
             base_model = LSTM(input_dim=1, hidden_dims=[60, 30], num_epochs=100)
         else:
-            raise ValueError("'sub_type' should either be 'US', 'canada',\
-                              'switzerland' or 'norway'.")
+            raise ValueError("'sub_type' should either be 'US', 'canada','switzerland' or 'norway'.")
     # The models for ensemble model based on snow class
     elif type == 'snowclass':
         if sub_type == 1:

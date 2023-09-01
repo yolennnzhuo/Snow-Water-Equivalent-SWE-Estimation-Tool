@@ -165,8 +165,7 @@ def train_model(model, ts, n_features, train_loader, val_loader, optimiser,
         avg_val_loss = running_val_loss / len(val_loader.dataset)
         val_losses.append(avg_val_loss)
 
-        print(f'Epoch {epoch+1}/{model.num_epochs}, \
-              Train Loss: {avg_train_loss}, Val Loss: {avg_val_loss}')
+        print(f'Epoch {epoch+1}/{model.num_epochs}, Train Loss: {avg_train_loss}, Val Loss: {avg_val_loss}')
 
         # Decay learning rate updated
         scheduler.step()
