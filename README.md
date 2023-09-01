@@ -51,12 +51,6 @@ After setting up, activate this environment with:
 conda activate swe_est
 ```
 
-After activating the environment, install 'torch' package by pip.
-
-```bash
-pip install torch
-```
-
 Once inside the environment, you can install ‘swe_tool’ with:
 
 ```bash
