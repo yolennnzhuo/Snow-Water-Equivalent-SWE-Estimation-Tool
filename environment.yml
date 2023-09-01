@@ -1,4 +1,4 @@
-name: swe_estimation
+name: swe_est
 channels:
   - defaults
   - conda-forge
@@ -11,10 +11,11 @@ dependencies:
   - scipy
   - folium
   - scikit-learn
-  - torch
   - rasterio
   - cartopy
   - pytest
   - sphinx
+  - captum 
+  
   - pip:
       - -r requirements.txt

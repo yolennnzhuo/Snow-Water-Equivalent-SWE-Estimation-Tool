@@ -632,6 +632,15 @@ def plot_attr_over_time(attr, feature_idx):
     plt.show()
 
 def t_test(perf_null, perf_modif):
+    """
+    Perform t-test between two samples of performance metrics and interpret the result.
+
+    :param perf_null: Performance metrics (e.g RMSE) from the original method.
+    :type perf_null: list
+
+    :param perf_modif: Performance metrics (e.g RMSE) from the modified model.
+    :type perf_modif: list
+    """
     t_stat, p_val = stats.ttest_rel(perf_null, perf_modif)
 
     print(f'T-statistic: {t_stat}')

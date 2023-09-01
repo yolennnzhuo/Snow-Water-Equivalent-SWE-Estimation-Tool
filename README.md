@@ -37,6 +37,7 @@ Before installing ‘swe_tool’, ensure your environment meets the dependencies
 - cartopy
 - pytest
 - sphinx
+- captum
 
 If you're using conda, you can set up a new environment with the provided command. First, navigate to the tool directory:
 
@@ -47,7 +48,13 @@ conda env create -f environment.yml
 After setting up, activate this environment with:
 
 ```bash
-conda activate swe_estimation
+conda activate swe_est
+```
+
+After activating the environment, install 'torch' package by pip.
+
+```bash
+pip install torch
 ```
 
 Once inside the environment, you can install ‘swe_tool’ with:
