@@ -1,7 +1,7 @@
-name: swe_est
+name: swe
 channels:
-  - defaults
   - conda-forge
+  - defaults
 dependencies:
   - python=3.9
   - numpy>=1.13.0
@@ -12,10 +12,11 @@ dependencies:
   - folium
   - scikit-learn
   - rasterio
-  - cartopy
   - pytest
   - sphinx
   - captum 
-  
+  - ipykernel
+ 
   - pip:
+      - cartopy
       - -r requirements.txt
