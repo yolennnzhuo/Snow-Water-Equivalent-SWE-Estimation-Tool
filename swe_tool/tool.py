@@ -37,12 +37,14 @@ def mean_bias_error(y_true, y_pred):
 
 def apply_perturbation(hs):
     """
-    Apply perturbation to the snow depth to simulate the measurement error and do the data augumentation.
+    Apply perturbation to the snow depth to simulate the measurement error 
+    and do the data augumentation.
 
     :param hs: The input data (snow depth) need to apply perturbation.
     :type hs: pandas.core.series.Series
 
-    :return: perturbed_depth: The output seires after applying perturbation according to the 2017 WMO's guidelines.
+    :return: perturbed_depth: The output seires after applying perturbation 
+             according to the 2017 WMO's guidelines.
     :rtype: pandas.core.series.Series
     """
     if hs < 20:
@@ -132,7 +134,8 @@ def rebuild_data(df, var, ts=30):
     :type df: dataframe
     :param var: The features selected in rebuilding.
     :type var: list
-    :param ts: The time sequence length, the number of time steps to be considered in model, default is 30.
+    :param ts: The time sequence length, the number of time steps to be considered
+               in model, default is 30.
     :type ts: int, optinal
 
     :return: (input_values, target_values): The tuple of input_values(X) and target_values(Y).
@@ -157,9 +160,11 @@ def rebuild_data(df, var, ts=30):
                 # Subtract ts from end so that i+ts will not go out of bounds
                 for i in range(start, end - ts):
                     # Check if there is any missing values
-                    if not np.isnan(loc_df['station_SWE'][i+ts]) and all([not np.isnan(loc_df[v][i:i+ts]).any() for v in var]):
+                    if not np.isnan(loc_df['station_SWE'][i+ts]) and \
+                        all([not np.isnan(loc_df[v][i:i+ts]).any() for v in var]):
                         # Randomly apply the perturbation
-                        if not (loc_df[var][i:i+ts].sum(axis=0) == 0).all() or np.random.rand() < 0.5:
+                        if not (loc_df[var][i:i+ts].sum(axis=0) == 0).all() or\
+                              np.random.rand() < 0.5:
                             input_values.append(loc_df[var][i:i+ts])
                             target_values.append(loc_df['station_SWE'][i+ts])
                 start = end + 1
@@ -168,9 +173,11 @@ def rebuild_data(df, var, ts=30):
         if len(loc_df) - start >= ts: 
             for i in range(start, len(loc_df) - ts):
                 # Check if there is any missing values
-                if not np.isnan(loc_df['station_SWE'][i+ts]) and all([not np.isnan(loc_df[v][i:i+ts]).any() for v in var]):
+                if not np.isnan(loc_df['station_SWE'][i+ts]) and\
+                      all([not np.isnan(loc_df[v][i:i+ts]).any() for v in var]):
                     # Randomly apply the perturbation
-                    if not (loc_df[var][i:i+ts].sum(axis=0) == 0).all() or np.random.rand() < 0.5:
+                    if not (loc_df[var][i:i+ts].sum(axis=0) == 0).all() or \
+                        np.random.rand() < 0.5:
                         input_values.append(loc_df[var][i:i+ts])
                         target_values.append(loc_df['station_SWE'][i+ts])
 
@@ -196,7 +203,8 @@ def split_dataset(X, Y, test_size=0.2, random_state=42):
     :rtype: tuple
     """
     # Split into train and test sets
-    X_train, X_val, y_train, y_val = train_test_split(X, Y, test_size=test_size,random_state=random_state)
+    X_train, X_val, y_train, y_val = train_test_split(X, Y, test_size=test_size, 
+                                                      random_state=random_state)
     
     return X_train, X_val, y_train, y_val
 
@@ -240,7 +248,8 @@ def plot_loss(train_losses, val_losses):
 
 def plot_scatter(y_test_ori, test_pred):
     """
-    Plot the scattler plot to show the difference between the true data and the predicted data.
+    Plot the scattler plot to show the difference between the true data 
+    and the predicted data.
     
     :param y_test_ori: The true data. 
     :type y_test_ori: numpy.array or list
@@ -253,7 +262,8 @@ def plot_scatter(y_test_ori, test_pred):
     plt.xlabel('True Values')
     plt.ylabel('Predicted Values')
     plt.title('Scatter Plot of True vs Predicted Values')
-    plt.plot([min(y_test_ori), max(y_test_ori)], [min(y_test_ori), max(y_test_ori)], color='red')  
+    plt.plot([min(y_test_ori), max(y_test_ori)], [min(y_test_ori),\
+                                                   max(y_test_ori)], color='red')  
     plt.show()
 
 def plot_time_series(true_values, predictions_1, predictions_2=None, dates=None):
@@ -266,7 +276,8 @@ def plot_time_series(true_values, predictions_1, predictions_2=None, dates=None)
     :type predictions_1: numpy.array or list
     :param predictions_2: The second predicted SWE values.
     :type predictions_2: numpy.array or list, optional
-    :param dates: The dates corresponding to the values. If None, will use integer indices.
+    :param dates: The dates corresponding to the values. 
+                  If None, will use integer indices.
     :type dates: list, optional
     """
     if dates is not None:
@@ -279,10 +290,12 @@ def plot_time_series(true_values, predictions_1, predictions_2=None, dates=None)
     # Plot the true and predicted values
     fig, ax = plt.subplots(figsize=(15, 6))
     ax.plot(dates, true_values, label="True Values", color='blue')
-    ax.plot(dates, predictions_1, label="Predicted Values by MLSTM", color='green', linestyle='--')
+    ax.plot(dates, predictions_1, label="Predicted Values by MLSTM", \
+            color='green', linestyle='--')
     
     if predictions_2 is not None:  # If the third data is provided
-        ax.plot(dates, predictions_2, label="Predicted Values by SLSTM", color='red', linestyle='-.')
+        ax.plot(dates, predictions_2, label="Predicted Values by SLSTM", \
+                color='red', linestyle='-.')
     
     ax.legend()
     ax.set_xlabel("Time")
@@ -299,7 +312,8 @@ def plot_time_series(true_values, predictions_1, predictions_2=None, dates=None)
 
 def evaluate_model(test_loader, model, dataset):
     """
-    Evaluate the trained model by calculating MSE, KGE, MAE and R^2 score, and plot the difference between the true values and the predicted values.
+    Evaluate the trained model by calculating MSE, KGE, MAE and R^2 score,
+    and plot the difference between the true values and the predicted values.
     
     :param test_loader: The dataloader contain the test data. 
     :type test_loader: torch.utils.data.DataLoader
@@ -355,11 +369,12 @@ def evaluate_model(test_loader, model, dataset):
     return rmse_test, mae_test, mbe_test, r2_test, kge_test, y_test_ori, test_pred
 
 
-def train(df=None, df_test=None, train_file=None, test_file=None, var=['HS'], hidden_dims=[60,30], num_epochs=60, 
-          step_size=10, gamma=0.5, ts=30, lr=0.001, is_early_stop=True, threshold=20):   
+def train(df=None, df_test=None, train_file=None, test_file=None, var=['HS'],
+          hidden_dims=[60,30], num_epochs=60, step_size=10, gamma=0.5, ts=30,
+          lr=0.001, is_early_stop=True, threshold=20):   
     """
-    Trains an LSTM model using the training data and parameters, then plot the loss function, and evaluate it on the 
-    testing set.
+    Trains an LSTM model using the training data and parameters, 
+    then plot the loss function, and evaluate it on the testing set.
 
     Notes:
     This function performs the following steps:
@@ -369,9 +384,11 @@ def train(df=None, df_test=None, train_file=None, test_file=None, var=['HS'], hi
     4. Loss plotting: Plots the training and validation losses over epochs.
     5. Evaluation: Evaluates the model performance on the test data.
 
-    :param df: The input data to train the model, default is None. (Either df or train_file must be provided, but not both.)
+    :param df: The input data to train the model, default is None. 
+               (Either df or train_file must be provided, but not both.)
     :type df: pandas.Dataframe, optional
-    :param df_test: The input data to test the model, default is None. (Either df_test or test_file must be provided, but not both.)
+    :param df_test: The input data to test the model, default is None. 
+                    (Either df_test or test_file must be provided, but not both.)
     :type df_test: pandas.Dataframe, optional
     :param train_file: The csv file path to load the data for training, default is None.
     :type train_file: str, optional
@@ -387,7 +404,8 @@ def train(df=None, df_test=None, train_file=None, test_file=None, var=['HS'], hi
     :type step_size: int, optional
     :param gamma: Factor of learning rate decay. Default is 0.5.
     :type gamma: float, optional
-    :param ts: The time sequence length, the number of time steps to be considered in model, default is 30.
+    :param ts: The time sequence length, the number of time steps to be 
+               considered in model, default is 30.
     :type ts: int, optional  
     :param lr: The initial learning rate, default is 0.001.
     :type lr: float, optional  
@@ -401,7 +419,8 @@ def train(df=None, df_test=None, train_file=None, test_file=None, var=['HS'], hi
     :rtype: tuple(torch.nn.Module, float, float, float, float, float)
     """
     # Data preprocess
-    dataset = sweDataset.sweDataset(df=df, df_test=df_test, train_file=train_file, test_file=test_file, var=var, ts=ts)
+    dataset = sweDataset.sweDataset(df=df, df_test=df_test, train_file=train_file,
+                                    test_file=test_file, var=var, ts=ts)
     train_loader, val_loader, test_loader = dataset.get_data_loaders() 
 
     # Build model
@@ -411,33 +430,42 @@ def train(df=None, df_test=None, train_file=None, test_file=None, var=['HS'], hi
     scheduler = StepLR(optimiser, step_size=step_size, gamma=gamma)
 
     # Train
-    train_losses, val_losses = models.train_model(model, ts, len(var), train_loader, val_loader,
-                                                  optimiser, criterion, scheduler,is_early_stop, threshold)
+    train_losses, val_losses = models.train_model(model, ts, len(var), train_loader,
+                                                  val_loader,optimiser, criterion,
+                                                  scheduler,is_early_stop, threshold)
 
     # Plot the loss function
     plot_loss(train_losses, val_losses)
 
     # Evaluate
-    rmse_test, mae_test, mbe_test, kge_test, r2_test, _, _ = evaluate_model(test_loader, model, dataset)
+    rmse_test, mae_test, mbe_test, kge_test, r2_test, _, _ = evaluate_model(
+        test_loader, model, dataset
+        )
     
     return model, rmse_test, mae_test, mbe_test, kge_test, r2_test 
 
-def grid_search(hyper_para, df=None, df_test=None, train_file=None, test_file=None, var=['HS'], ts=30, hidden_dims=[50], 
-                num_epochs=60, step_size=10, gamma=0.5, lr=0.001, is_early_stop=True, threshold=20, hyper_type = "ts"):
+def grid_search(hyper_para, df=None, df_test=None, train_file=None, 
+                test_file=None, var=['HS'], ts=30, hidden_dims=[50], 
+                num_epochs=60, step_size=10, gamma=0.5, lr=0.001, 
+                is_early_stop=True, threshold=20, hyper_type = "ts"):
     """
     Conduct grid search over given hyper-parameters and plots the performance metrics.
 
     Notes:
-    1. This function will loop over the provided hyperparameter values, train a model for each, 
-       and then plot performance metrics (RMSE, MAE, MBE, KGE, R2) for the models.
-    2. If 'hyper_type' is set to "ts", the grid search will be performed over different time series lengths.
-       If set to "architecture", the grid search will be performed over different LSTM architectures.
+    1. This function will loop over the provided hyperparameter values,
+       train a model for each, and then plot performance metrics 
+       (RMSE, MAE, MBE, KGE, R2) for the models.
+    2. If 'hyper_type' is set to "ts", the grid search will be performed 
+       over different time series lengths. If set to "architecture", the 
+       grid search will be performed over different LSTM architectures.
 
     :param hyper_para: List of hyperparameters values to search over.
     :type hyper_para: list
-    :param df: The input data to train the model, default is None. (Either df or train_file must be provided, but not both.)
+    :param df: The input data to train the model, default is None. 
+               (Either df or train_file must be provided, but not both.)
     :type df: pandas.Dataframe, optional
-    :param df_test: The input data to test the model, default is None. (Either df_test or test_file must be provided, but not both.)
+    :param df_test: The input data to test the model, default is None. 
+                     (Either df_test or test_file must be provided, but not both.)
     :type df_test: pandas.Dataframe, optional
     :param train_file: The csv file path to load the data for training, default is None.
     :type train_file: str, optional
@@ -445,7 +473,8 @@ def grid_search(hyper_para, df=None, df_test=None, train_file=None, test_file=No
     :type test_file: str, optional
     :param var: The features required for training, default is ['HS'].
     :type var: list, optional
-    :param ts: The time sequence length, the number of time steps to be considered in model, default is 30.
+    :param ts: The time sequence length, the number of time steps to be considered
+               in model, default is 30.
     :type ts: int, optional  
     :param hidden_dims: The dimensionality of hidden layers, default is [60, 30].
     :type hidden_dims: list, optional
@@ -479,11 +508,13 @@ def grid_search(hyper_para, df=None, df_test=None, train_file=None, test_file=No
         else:
             raise ValueError("'hyper_type' should either be 'ts' or 'architecture'.") 
         # Train the model
-        _, rmse_test, mae_test, mbe_test, kge_test, r2_test = train(df=df, df_test=df_test, train_file=train_file, 
-                                                            test_file=test_file, var=var, hidden_dims=hidden_dims, 
-                                                            num_epochs=num_epochs, step_size=step_size,
-                                                            gamma=gamma, ts=ts, lr=lr, is_early_stop=is_early_stop,
-                                                            threshold=threshold)
+        _, rmse_test, mae_test, mbe_test, kge_test, r2_test = train(
+            df=df, df_test=df_test, train_file=train_file, 
+            test_file=test_file, var=var, hidden_dims=hidden_dims, 
+            num_epochs=num_epochs, step_size=step_size,
+            gamma=gamma, ts=ts, lr=lr, is_early_stop=is_early_stop,
+            threshold=threshold
+            )
         # Append results together
         results_rmse.append(rmse_test)
         results_mae.append(mae_test)  
@@ -507,7 +538,8 @@ def plot_grid_search(hyper_para, hyper_type, results):
     """
     # Plot the overall diagrams
     fig, axs = plt.subplots(2, 3, figsize=(18, 12)) 
-    hyper_para = hyper_para if hyper_type == "ts" else ["[50]", "[60,30]","[70,50,30]","[70,50,30,10]"]
+    hyper_para = hyper_para if hyper_type == "ts" \
+        else ["[50]", "[60,30]","[70,50,30]","[70,50,30,10]"]
     xlabel = 'Time length' if hyper_type == "ts" else 'Architecture' 
 
     axs[0, 0].plot(hyper_para, results['RMSE'], label="RMSE", color='tab:blue', marker='o')
@@ -561,12 +593,14 @@ def cal_integrated_gradients(model, X):
 
 def cal_attr(attr):
     """
-    Calculate the mean and sum of Integrated Gradients attributions for the given attributions.
+    Calculate the mean and sum of Integrated Gradients attributions for 
+    the given attributions.
 
     :param attr: Attributions tensor calculating from Integrated Gradients methods.
     :type attr: numpy.ndarray or a list
 
-    :return: tuple of (mean_attr, sum_attr) - Mean and sum of the attributions across the specified dimensions.  
+    :return: tuple of (mean_attr, sum_attr) - Mean and sum of the attributions 
+             across the specified dimensions.  
     :rtype: tuple of (torch.Tensor, torch.Tensor)
     """
     if not isinstance(attr, torch.Tensor):
@@ -577,7 +611,8 @@ def cal_attr(attr):
 
     return mean_attr, sum_attr
 
-def plot_attribution(attribution, feature_names, title="Feature Importances", show_percentage=True, shift=6):
+def plot_attribution(attribution, feature_names, title="Feature Importances",
+                      show_percentage=True, shift=6):
     """
     Plot the attribution of each feature.
     """
@@ -597,7 +632,8 @@ def plot_attribution(attribution, feature_names, title="Feature Importances", sh
 
     # Adding the attribution values next to the bars
     if show_percentage:
-        bars = plt.barh(sorted_feature_names, sorted_attribution, color=colors, alpha=0.7, height=0.8)
+        bars = plt.barh(sorted_feature_names, sorted_attribution, color=colors,
+                         alpha=0.7, height=0.8)
         for bar in bars:
             width = bar.get_width()
             label_text = f'{width:.2f}'
@@ -663,7 +699,8 @@ def plot_data_distribution(HS_df, target_values_df):
     axarr[0].set_xlabel('Snow Depth in cm')
 
     # (b) SWE
-    target_values_df['station_SWE'].plot(kind='hist', ax=axarr[1], bins=30, edgecolor='black')
+    target_values_df['station_SWE'].plot(kind='hist', ax=axarr[1], 
+                                         bins=30, edgecolor='black')
     axarr[1].set_title('(e) Filtered SWE')
     axarr[1].set_xlabel('Snow Water Equivalent in cm')
 
@@ -680,14 +717,17 @@ def plot_data_distribution(HS_df, target_values_df):
     axarr[2].set_title('Filtered Number of Records by Month')
     axarr[2].set_xlabel('Month of records')
     axarr[2].set_xticks(range(12))
-    axarr[2].set_xticklabels(['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'], rotation=45)
+    axarr[2].set_xticklabels(['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr',\
+                               'May', 'Jun', 'Jul', 'Aug', 'Sep'], rotation=45)
     
     plt.tight_layout()
     plt.show()
     
-def plot_snow_class(path='../dataset/SnowClass_GL_50km_0.50degree_2021_v01.0.tif', stations_csv='../dataset/stations_loc.csv'):
+def plot_snow_class(path='../dataset/SnowClass_GL_50km_0.50degree_2021_v01.0.tif', 
+                    stations_csv='../dataset/stations_loc.csv'):
     """
-    Plot the diagram to show the global snow classification according to snow classification scheme introduced by (Liston and Sturm 2021)
+    Plot the diagram to show the global snow classification according to snow
+    classification scheme introduced by (Liston and Sturm 2021)
     and stations.
     """
     # Open file
@@ -696,7 +736,8 @@ def plot_snow_class(path='../dataset/SnowClass_GL_50km_0.50degree_2021_v01.0.tif
         snow_class_transform = src.transform 
         snow_class_crs = src.crs
 
-    cmap = ListedColormap(['lightcoral', 'lightgreen', 'orange', 'lightyellow', 'lightskyblue', 'pink','plum','cyan'])  
+    cmap = ListedColormap(['lightcoral', 'lightgreen', 'orange', 'lightyellow', \
+                           'lightskyblue', 'pink','plum','cyan'])  
 
     # Create map
     fig = plt.figure(figsize=(20, 10))
@@ -708,16 +749,23 @@ def plot_snow_class(path='../dataset/SnowClass_GL_50km_0.50degree_2021_v01.0.tif
     ax.set_extent([-150, 40, 20, 100], crs=ccrs.PlateCarree())
 
     # Show data
-    img = ax.imshow(snow_class_array, origin='upper', extent=[-180, 180, -90, 90], transform=ccrs.PlateCarree(), cmap=cmap)
+    img = ax.imshow(snow_class_array, origin='upper', extent=[-180, 180, -90, 90],
+                     transform=ccrs.PlateCarree(), cmap=cmap)
     
     # Load stations data and plot them
     stations = pd.read_csv(stations_csv)
-    ax.scatter(stations['long'], stations['lat'], s=70, c='black', marker='*', transform=ccrs.PlateCarree(), label='Station')
+    ax.scatter(stations['long'], stations['lat'], s=70, c='black', marker='*', 
+               transform=ccrs.PlateCarree(), label='Station')
 
     # Create legend
-    legend_colors = ['lightcoral', 'lightgreen', 'orange', 'lightyellow', 'lightskyblue', 'pink','plum','cyan']
-    legend_labels = ['1-Tundra', '2-Boreal Forest', '3-Maritime', '4-Ephemeral (includes no snow)', '5-Prairie', '6-Montane Forest', '7-Ice', '8-Ocean']  
-    legend_patches = [Patch(color=color, label=label) for color, label in zip(legend_colors, legend_labels)]
-    ax.legend(handles=legend_patches + [Patch(color='black', label='Station')], loc='upper right')
+    legend_colors = ['lightcoral', 'lightgreen', 'orange', 'lightyellow', \
+                     'lightskyblue', 'pink','plum','cyan']
+    legend_labels = ['1-Tundra', '2-Boreal Forest', '3-Maritime', \
+                     '4-Ephemeral (includes no snow)', '5-Prairie', \
+                        '6-Montane Forest', '7-Ice', '8-Ocean']  
+    legend_patches = [Patch(color=color, label=label) for color, label\
+                       in zip(legend_colors, legend_labels)]
+    ax.legend(handles=legend_patches + [Patch(color='black', label='Station')],\
+               loc='upper right')
 
     plt.show()

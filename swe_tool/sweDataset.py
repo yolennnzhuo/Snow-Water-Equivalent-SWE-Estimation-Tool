@@ -11,38 +11,53 @@ class sweDataset(Dataset):
     """
     A class used to prepare the data for training and testing models.
 
-    - This class enables users to process data either by passing a CSV file or a direct file path. It offers methods to load, interpolate, 
-    scale, reconstruct, and partition data. For additional preprocessing, such as applying perturbation, users can preprocess the data 
+    - This class enables users to process data either by passing a CSV 
+      file or a direct file path. It offers methods to load, interpolate, 
+      scale, reconstruct, and partition data. For additional preprocessing,
+      such as applying perturbation, users can preprocess the data 
     externally and then pass it into this class through a file (df).
 
     Attributes:
-        - df: The input data to train the model. (Either df or train_file must be provided, but not both.)
-        - df_test: The input data to test the model. (Either df_test or test_file must be provided, but not both.)
+        - df: The input data to train the model. 
+              (Either df or train_file must be provided, but not both.)
+        - df_test: The input data to test the model. 
+                   (Either df_test or test_file must be provided, but not both.)
         - train_file: The file path to load the data for training.
         - test_file: The file path to load the data for testing.
         - var: The features required for training.
-        - ts: The time sequence length, the number of time steps to be considered in model.
-        - X_train, X_val, X_test: Input data for training, validation, and testing respectively.
-        - y_train, y_val, y_test: Target data for training, validation, and testing respectively.
+        - ts: The time sequence length, the number of time steps to be
+              considered in model.
+        - X_train, X_val, X_test: Input data for training, validation,
+                                  and testing respectively.
+        - y_train, y_val, y_test: Target data for training, validation, 
+                                  and testing respectively.
         - scaler_temp: Scaler used for 'temperature'.
-        - scaler_minmax: Scaler used for certain features ('HS', 'precipitation', 'snowfall', 'solar_radiation').
+        - scaler_minmax: Scaler used for certain features 
+                         ('HS', 'precipitation', 'snowfall', 'solar_radiation').
         - scaler_y: Scaler used for 'station_SWE' feature.
 
     Methods:
-        - load_data(df, file_path): Load data either from a dataframe or a file path.
+        - load_data(df, file_path): Load data either from a
+                                    dataframe or a file path.
         - scale_train_data(): Scale the training data.
         - scale_test_data(): Scale the testing data.
         - get_y_scaler(): Get the scaler for target data.
-        - get_data_loaders(batch_size=32): Get the data loader for training, testing and validation.
-        - inverse_scale_target(target): Reverse the predicted value back to the original scale by using the scaler from 'get_y_scaler()'.
+        - get_data_loaders(batch_size=32): Get the data loader for training,
+                                           testing and validation.
+        - inverse_scale_target(target): Reverse the predicted value back to the 
+                                        original scale by using the scaler from 
+                                        'get_y_scaler()'.
     """
-    def __init__(self, df=None, df_test=None, train_file=None, test_file=None, var=['HS'], ts=30):
+    def __init__(self, df=None, df_test=None, train_file=None,
+                  test_file=None, var=['HS'], ts=30):
         """
         Initialise the LSTM model class.
 
-        :param df: The input data to train the model, default is None. (Either df or train_file must be provided, but not both.)
+        :param df: The input data to train the model, default is None. 
+                    (Either df or train_file must be provided, but not both.)
         :type df: pandas.Dataframe, optional
-        :param df_test: The input data to test the model, default is None. (Either df_test or test_file must be provided, but not both.)
+        :param df_test: The input data to test the model, default is None. 
+                        (Either df_test or test_file must be provided, but not both.)
         :type df_test: pandas.Dataframe, optional
         :param train_file: The csv file path to load the data for training, default is None.
         :type train_file: str, optional
@@ -50,7 +65,8 @@ class sweDataset(Dataset):
         :type test_file: str, optional
         :param var: The features required for training, default is ['HS'].
         :type var: list, optional
-        :param ts: The time sequence length, the number of time steps to be considered in model, default is 30.
+        :param ts: The time sequence length, the number of time steps to 
+                   be considered in model, default is 30.
         :type ts: int, optional          
         """
         super().__init__()
@@ -67,7 +83,8 @@ class sweDataset(Dataset):
         self.scale_train_data()
         # Rebuilding training data
         input_values, target_values = tool.rebuild_data(self.df, var, ts)
-        self.X_train, self.X_val, self.y_train, self.y_val = tool.split_dataset(input_values, target_values)
+        self.X_train, self.X_val, self.y_train, self.y_val = \
+        tool.split_dataset(input_values, target_values)
         
         # Loading testing data
         self.df_test = self.load_data(df_test, test_file)
@@ -97,7 +114,9 @@ class sweDataset(Dataset):
         elif df is None and file_path is None:
             raise ValueError("Either input dataframe or file path must be provided.")
         elif df is not None and file_path is not None:
-            raise ValueError("The input dataframe and file path are both provided, can only process one.")
+            raise ValueError(
+                "The input dataframe and file path are both provided, can only process one."
+                )
         
         # set the datetime and sort the values
         df = df.sort_values(by=["loc","date"])
@@ -123,17 +142,37 @@ class sweDataset(Dataset):
         """
         Scale training data.
         """
-        self.df['temperature'], self.scaler_temp = tool.standardise_data(np.array(self.df['temperature']).reshape(-1,1), 'train')
-        self.df[['HS','precipitation','snowfall','solar_radiation']], self.scaler_minmax = tool.minmax_data(self.df[['HS','precipitation','snowfall','solar_radiation']].values, 'train')
-        self.df['station_SWE'], self.scaler_y = tool.minmax_data(np.array(self.df['station_SWE']).reshape(-1,1), 'train')
+        temperature = np.array(self.df['temperature']).reshape(-1,1)
+        self.df['temperature'], self.scaler_temp = tool.standardise_data(
+            temperature, 'train'
+            )
+
+        columns_to_scale = ['HS', 'precipitation', 'snowfall', 'solar_radiation']
+        self.df[columns_to_scale], self.scaler_minmax = tool.minmax_data(
+            self.df[columns_to_scale].values, 'train'
+            )
+
+        swe = np.array(self.df['station_SWE']).reshape(-1, 1)
+        self.df['station_SWE'], self.scaler_y = tool.minmax_data(swe, 'train')
         
     def scale_test_data(self):
         """
         Scale testing data.
         """
-        self.df_test['temperature'], _ = tool.standardise_data(np.array(self.df_test['temperature']).reshape(-1,1), 'test', self.scaler_temp)
-        self.df_test[['HS','precipitation','snowfall','solar_radiation']], _ = tool.minmax_data(self.df_test[['HS','precipitation','snowfall','solar_radiation']].values, 'test', self.scaler_minmax)
-        self.df_test['station_SWE'], _ = tool.minmax_data(np.array(self.df_test['station_SWE']).reshape(-1,1), 'test', self.scaler_y)
+        temperature = np.array(self.df_test['temperature']).reshape(-1, 1)
+        self.df_test['temperature'], _ = tool.standardise_data(
+            temperature, 'test', self.scaler_temp
+            )
+        
+        columns_to_scale = ['HS', 'precipitation', 'snowfall', 'solar_radiation']
+        self.df_test[columns_to_scale], _ = tool.minmax_data(
+            self.df_test[columns_to_scale].values, 'test', self.scaler_minmax
+            )
+        
+        swe = np.array(self.df_test['station_SWE']).reshape(-1, 1)
+        self.df_test['station_SWE'], _ = tool.minmax_data(
+            swe, 'test', self.scaler_y
+        )
     
     def get_y_scaler(self):
         """
@@ -151,7 +190,8 @@ class sweDataset(Dataset):
         :param batch_size: The batch size in dataloader, default is 32.
         :type batch_size: int, optional
 
-        :return: (train_loader, val_loader, test_loader): The data loader for training, validating and testing.
+        :return: (train_loader, val_loader, test_loader): The data loader
+                 for training, validating and testing.
         :rtype: tuple of torch.utils.data.DataLoader
         """
         # Convert data to torch tensors
@@ -174,7 +214,8 @@ class sweDataset(Dataset):
 
     def inverse_scale_target(self, target):
         """
-        Inverse the predicted value back to the original scale by using the scaler from 'get_y_scaler()'.
+        Inverse the predicted value back to the original scale by using 
+        the scaler from 'get_y_scaler()'.
 
         :param target: The target data for inversing.
         :type target: list or numpy.array

@@ -10,23 +10,30 @@ class predictLSTM():
     A class designed to use a pre-trained LSTM Model to predict SWE value.
 
     Attributes:
-        - country_models: A dictionary where store the LSTM models based on countries.
-        - snowclass_models: A dictionary where store the LSTM models based on snow classes.
+        - country_models: A dictionary where store the LSTM models based on
+          countries.
+        - snowclass_models: A dictionary where store the LSTM models based 
+          on snow classes.
         - type: The general category of the model.
         - sub_type: The further specific category based on the 'type'.
         - model: The pre-trained LSTM model.
 
     Methods:
-        - __call__: Make the instance to use the appropriate prediction method.
-        - add_country_model(x): Ensemble all the LSTM models based on countries by adding to dictionary.
-        - add_snowclass_model(x): Ensemble all the LSTM models based on different snow classes by adding to dictionary.
-        - predict_by_country(x): Apply the ensemble LSTM models with a specific location to 
-                               predict the SWE.
-        - predict_by_snowclass(x): Apply the ensemble LSTM models with a specific snow class to predict the SWE.
-        - predict_by_general(x): Apply the general LSTM models to predict the SWE (The model is trained 
-                               on the whole dataset - across countries).
+        - __call__: Make the instance to use the appropriate prediction 
+          method.
+        - add_country_model(x): Ensemble all the LSTM models based on 
+          countries by adding to dictionary.
+        - add_snowclass_model(x): Ensemble all the LSTM models based 
+          on different snow classes by adding to dictionary.
+        - predict_by_country(x): Apply the ensemble LSTM models with a
+          specific location to predict the SWE.
+        - predict_by_snowclass(x): Apply the ensemble LSTM models with
+          a specific snow class to predict the SWE.
+        - predict_by_general(x): Apply the general LSTM models to predict
+          the SWE (The model is trained on the whole dataset - across countries).
     """
-    def __init__(self,model_path='../models/global_model.pth',type='general',sub_type=None):
+    def __init__(self,model_path='../models/global_model.pth',type='general'
+                 ,sub_type=None):
         """
         Initialise the predictLSTM class.
 
@@ -36,8 +43,10 @@ class predictLSTM():
         :param type: The general category of the model, can be 'general', 
                     'countries', or 'snowclass'. Default is 'general'.
         :type type: str, optional
-        :param sub_type: Further specific category based on the 'type'. For 'countries', it should be a country name;
-                         for 'snowclass', it should be a number. Default is None.
+        :param sub_type: Further specific category based on the 'type'. 
+                         For 'countries', it should be a country name;
+                         for 'snowclass', it should be a number. 
+                         Default is None.
         :type sub_type: str or int, optional
         """
         self.country_models = {}
@@ -84,7 +93,8 @@ class predictLSTM():
 
     def add_country_model(self, country, model_path):
         """
-        Ensemble all the pre-trained LSTM model (Add all the models to 'country_models' dictionary)
+        Ensemble all the pre-trained LSTM model (Add all the models 
+        to 'country_models' dictionary)
 
         :param country: The name of country where needs to predict SWE.
         :type country: str
@@ -96,7 +106,8 @@ class predictLSTM():
 
     def add_snowclass_model(self, snow_class, model_path):
         """
-        Ensemble all the pre-trained LSTM model (Add all the models to 'snowclass_models' dictionary)
+        Ensemble all the pre-trained LSTM model (Add all the models to 
+        'snowclass_models' dictionary)
 
         :param snow_class: The snow class category, either 1, 2, 3, 5, or 6.
         :type snow_class: int
@@ -108,7 +119,8 @@ class predictLSTM():
 
     def predict_by_country(self, country, input_data):
         """
-        Call the ensemble models to predict the SWE value by passing the required input data(X).
+        Call the ensemble models to predict the SWE value by passing the 
+        required input data(X).
 
         :param country: The name of country where needs to predict SWE.
         :type country: str
@@ -129,7 +141,8 @@ class predictLSTM():
 
     def predict_by_snowclass(self, snow_class, input_data):
         """
-        Call the ensemble models to predict the SWE value by passing the required input data(X).
+        Call the ensemble models to predict the SWE value by passing the 
+        required input data(X).
 
         :param snow_class: The snow class category, either 1, 2, 3, 5, or 6.
         :type snow_class: int
@@ -150,7 +163,8 @@ class predictLSTM():
         
     def predict_by_general(self, input_data):
         """
-        Call the general model to predict the SWE value by passing the required input data(X).
+        Call the general model to predict the SWE value by passing the 
+        required input data(X).
 
         :param input_data: The input data requires for the models.
         :type input_data: list or numpy.array
@@ -170,9 +184,9 @@ def model_class(type='general', sub_type=None):
                  'countries', or 'snowclass'. Default is 'general'.
     :type type: str, optional
     :param sub_type: Further specific category based on the 'type'. 
-                     For 'countries', it should be a country name; for 'snowclass', it should be a number.
+                     For 'countries', it should be a country name; 
+                     For 'snowclass', it should be a number.
     :type sub_type: str or int, optional
-
     :return: A LSTM model.
     :rtype: torch.nn.Module
     """
@@ -190,7 +204,8 @@ def model_class(type='general', sub_type=None):
         elif sub_type == 'US':
             base_model = LSTM(input_dim=1, hidden_dims=[60, 30], num_epochs=100)
         else:
-            raise ValueError("'sub_type' should either be 'US', 'canada', 'switzerland' or 'norway'.")
+            raise ValueError("'sub_type' should either be 'US', 'canada',\
+                              'switzerland' or 'norway'.")
     # The models for ensemble model based on snow class
     elif type == 'snowclass':
         if sub_type == 1:
@@ -221,7 +236,8 @@ def load_model(model_path, type='general', sub_type=None):
                  or 'snowclass'. Default is 'general'.
     :type type: str, optional
     :param sub_type: Further specific category based on the 'type'. 
-                     For 'countries', it should be a country name; for 'snowclass', it should be a number.
+                     For 'countries', it should be a country name; 
+                     for 'snowclass', it should be a number.
     :type sub_type: str, optional
 
     :return: A LSTM model.

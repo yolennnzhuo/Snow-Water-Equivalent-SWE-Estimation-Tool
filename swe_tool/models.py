@@ -3,9 +3,6 @@
 
 import torch
 from torch import nn
-import sweDataset
-from torch import nn
-
 
 class LSTM(nn.Module):
     """
@@ -18,19 +15,25 @@ class LSTM(nn.Module):
         - fc: Linear transformation to the output.
 
     Methods:
-        - forward(x): Build to process the input data throught layers and return the outputs.
+        - forward(x): Build to process the input data throught layers and 
+                      return the outputs.
     """
-    def __init__(self, input_dim=1, hidden_dims=[60, 30], num_epochs=60, output_dim=1):
+    def __init__(self, input_dim=1, hidden_dims=[60, 30], num_epochs=60, 
+                 output_dim=1):
         """
         Initialise the LSTM model class.
 
-        :param input_dim: The dimension of input data for LSTM layer, default is 1.
+        :param input_dim: The dimension of input data for LSTM layer, 
+                          default is 1.
         :type input_dim: int, optional
-        :param hidden_dims: The dimensionality of hidden layers, default is [60, 30].
+        :param hidden_dims: The dimensionality of hidden layers, 
+                            default is [60, 30].
         :type hidden_dims: list, optional
-        :param num_epochs: The number of epoches runs for training, default is 60.
+        :param num_epochs: The number of epoches runs for training, 
+                           default is 60.
         :type num_epochs: int, optional
-        :param output_dim: The output dimension of output data for LSTM layer, default is 1.
+        :param output_dim: The output dimension of output data for LSTM 
+                           layer, default is 1.
         :type output_dim: int, optional        
         """
         super().__init__()
@@ -77,13 +80,15 @@ class LSTM(nn.Module):
 
         return out
     
-def train_model(model, ts, n_features, train_loader, val_loader, optimiser, criterion, scheduler, is_early_stop=False, threshold=20):
+def train_model(model, ts, n_features, train_loader, val_loader, optimiser, 
+                criterion, scheduler, is_early_stop=False, threshold=20):
     """
     Train and validate the LSTM model.
 
     :param model: The model to be trained and validated, such as LSTM.
     :type model: torch.nn.Module
-    :param ts: The time sequence length, the number of time steps to be considered in model.
+    :param ts: The time sequence length, the number of time steps to be 
+               considered in model.
     :type ts: int
     :param n_features: The number of features used in training.
     :type n_features: int
@@ -91,16 +96,20 @@ def train_model(model, ts, n_features, train_loader, val_loader, optimiser, crit
     :type train_loader:  torch.utils.data.DataLoader
     :param val_loader: The validation data loader used to validate the model.
     :type val_loader: torch.utils.data.DataLoader
-    :param optimiser: The optimiser to update the weights of model during the training, such as Adam.
+    :param optimiser: The optimiser to update the weights of model during
+                      the training, such as Adam.
     :type optimiser: torch.optim.Adam
-    :param criterion: The loss function used to calcualte the training and validation loss, such as MSE.
+    :param criterion: The loss function used to calcualte the training and
+                      validation loss, such as MSE.
     :type criterion: torch.nn.modules
     :param scheduler: The scheduler used to adjust learning rate
     :type scheduler: torch.optim.lr_scheduler.StepLR.
-    :param is_early_stop: Whether to enable early stopping or not, default is False.
+    :param is_early_stop: Whether to enable early stopping or not,
+                          default is False.
     :type is_early_stop: bool, optional   
-    :param threshold: Determine when to stop the training, e.g stop if no improvement in the next 'threshold' 
-                      continuous epochs, default is 20 epochs.
+    :param threshold: Determine when to stop the training, e.g stop if no 
+                      improvement in the next 'threshold' continuous epochs,
+                      default is 20 epochs.
     :type threshold: int, optional   
 
     :return: A tuple containing the training and validation losses for each epoch.
@@ -156,7 +165,8 @@ def train_model(model, ts, n_features, train_loader, val_loader, optimiser, crit
         avg_val_loss = running_val_loss / len(val_loader.dataset)
         val_losses.append(avg_val_loss)
 
-        print(f'Epoch {epoch+1}/{model.num_epochs}, Train Loss: {avg_train_loss}, Val Loss: {avg_val_loss}')
+        print(f'Epoch {epoch+1}/{model.num_epochs}, \
+              Train Loss: {avg_train_loss}, Val Loss: {avg_val_loss}')
 
         # Decay learning rate updated
         scheduler.step()
@@ -177,4 +187,3 @@ def train_model(model, ts, n_features, train_loader, val_loader, optimiser, crit
                 break
 
     return train_losses, val_losses
-
